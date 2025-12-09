@@ -1,21 +1,12 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from 'recharts';
 
 const WEARS_PER_AVOIDED_ITEM = 10;
 const CO2_PER_AVOIDED_ITEM = 5; // kg
-const GOAL_CO2 = 50; // kg – you can change this
+const GOAL_CO2 = 150; // kg
 
 export default function Chart() {
-  const [chartData, setChartData] = useState([]);
+  const [co2Saved, setCo2Saved] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,14 +25,9 @@ export default function Chart() {
         0
       );
       const avoidedItems = Math.floor(totalWears / WEARS_PER_AVOIDED_ITEM);
-      const co2Saved = avoidedItems * CO2_PER_AVOIDED_ITEM;
+      const saved = avoidedItems * CO2_PER_AVOIDED_ITEM;
 
-      const chartValues = [
-        { name: 'Saved', value: co2Saved },
-        { name: 'Goal', value: GOAL_CO2 },
-      ];
-
-      setChartData(chartValues);
+      setCo2Saved(saved);
       setLoading(false);
     }
 
@@ -56,27 +42,55 @@ export default function Chart() {
     );
   }
 
+  const percentage = Math.min((co2Saved / GOAL_CO2) * 100, 100);
+  const circumference = 2 * Math.PI * 70; // radius = 70
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+
+  // Calculate km equivalent (assuming ~0.068 kg CO2 per km)
+  const kmEquivalent = Math.round(co2Saved / 0.068);
+
   return (
-    <div className="chart-container">
-      <ResponsiveContainer width="100%" height={180}>
-        <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#2d5a45" />
-          <XAxis dataKey="name" stroke="#ffffff" tick={{ fill: '#ffffff', fontSize: 12 }} />
-          <YAxis stroke="#ffffff" tick={{ fill: '#ffffff', fontSize: 12 }} />
-          <Tooltip
-            formatter={(value) => [`${value} kg`, 'CO₂']}
-            labelFormatter={(label) => label}
-            contentStyle={{
-              backgroundColor: '#0d1f1a',
-              border: '1px solid #2d5a45',
-              borderRadius: '0.5rem',
-            }}
-            labelStyle={{ color: '#ffffff' }}
-            itemStyle={{ color: '#F0FF1B' }}
+    <>
+    <div className="donut-chart-container">
+      <h3 className="donut-chart-label">CO₂ savings</h3>
+      
+      <div className="donut-chart-wrapper">
+        <svg width="120" height="120" viewBox="0 0 200 200">
+          {/* Background circle */}
+          <circle
+            cx="100"
+            cy="100"
+            r="70"
+            fill="none"
+            stroke="#1a3a2e"
+            strokeWidth="20"
           />
-          <Bar dataKey="value" fill="#F0FF1B" radius={[8, 8, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
+          {/* Progress arc */}
+          <circle
+            cx="100"
+            cy="100"
+            r="70"
+            fill="none"
+            stroke="#F0FF1B"
+            strokeWidth="20"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            transform="rotate(-90 100 100)"
+            style={{ transition: 'stroke-dashoffset 0.5s ease' }}
+          />
+        </svg>
+        
+        <div className="donut-chart-center">
+          <div className="donut-chart-value">{co2Saved}</div>
+          <div className="donut-chart-unit">kg</div>
+        </div>
+      </div>
+      
+      <div className="donut-chart-goal">Goal: {GOAL_CO2} kg</div>
     </div>
+    <div className="donut-chart-equivalent">
+        Equivalent to {kmEquivalent} km of driving <i className="fa-solid fa-car-side"></i>
+    </div>
+    </>
   );
 }

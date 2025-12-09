@@ -6,8 +6,6 @@ import Logo from '../assets/logo.png';
 
 export default function Home() {
   const [user, setUser] = useState(null);
-  const [totalWears, setTotalWears] = useState(0);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchUser() {
@@ -16,31 +14,6 @@ export default function Home() {
     }
     fetchUser();
   }, []);
-
-  useEffect(() => {
-    async function fetchStats() {
-      setLoading(true);
-
-      const { data, error } = await supabase
-        .from('items')
-        .select('wear_count');
-
-      if (error) {
-        console.error('Error fetching stats:', error);
-        setLoading(false);
-        return;
-      }
-
-      const wears = data.reduce((sum, item) => sum + (item.wear_count || 0), 0);
-      setTotalWears(wears);
-      setLoading(false);
-    }
-
-    fetchStats();
-  }, []);
-
-  const avoidedItems = Math.floor(totalWears / 10);
-  const estimatedCO2SavedKg = avoidedItems * 5;
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'User';
 
@@ -55,14 +28,14 @@ export default function Home() {
         </div>
       </div>
 
-      <h1 className="home-greeting">
-        Hello <span className="home-name">{firstName}</span>
-      </h1>
+      <div className="home-content">
+        <h1 className="home-greeting">
+          <span className='greeting'>Hello, </span> <span className="home-name">{firstName}</span>
+        </h1>
+        
+        <p className="home-subtitle">Here is your impact on the planet</p>
 
-      <div className="saved-co2-card">
-        <h2 className="saved-co2-title">Saved CO₂</h2>
-          <Chart />
-
+        <Chart />
       </div>
 
       <Navbar />
