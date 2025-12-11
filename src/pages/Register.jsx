@@ -5,6 +5,7 @@ import RegisterInput from '../components/RegisterInput';
 
 export default function Register() {
   const navigate = useNavigate();
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -17,7 +18,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      if (!email || !password || !confirmPassword) {
+      if (!fullName || !email || !password || !confirmPassword) {
         setError('Please fill in all fields');
         setLoading(false);
         return;
@@ -38,6 +39,11 @@ export default function Register() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: fullName,
+          }
+        }
       });
 
       if (error) {
@@ -63,6 +69,15 @@ export default function Register() {
         <h1 className="login-title">Sign up</h1>
         
         <form onSubmit={handleRegister} className="login-form">
+          <RegisterInput
+            label="Full Name"
+            type="text"
+            id="fullName"
+            placeholder="Enter your full name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+          />
+
           <RegisterInput
             label="Email"
             type="email"
