@@ -1,36 +1,47 @@
+// src/pages/ItemDetail.jsx
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { useItems } from '../context/ItemsContext';
 import Navbar from '../components/Navbar';
 
 export default function ItemDetail() {
   const { id } = useParams();
+  const { items, updateItem } = useItems();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    async function fetchItem() {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('items')
-        .select('*')
-        .eq('id', id)
-        .single();
+    // First check if item exists in context (faster)
+    const cachedItem = items.find(i => i.id === id);
+    if (cachedItem) {
+      setItem(cachedItem);
+      setLoading(false);
+    } else {
+      // Fallback to fetching from database
+      async function fetchItem() {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('items')
+          .select('*')
+          .eq('id', id)
+          .single();
 
-      if (error) {
-        console.error('Error fetching item:', error);
+        if (error) {
+          console.error('Error fetching item:', error);
+          setLoading(false);
+          return;
+        }
+
+        setItem(data);
         setLoading(false);
-        return;
       }
 
-      setItem(data);
-      setLoading(false);
+      fetchItem();
     }
-
-    fetchItem();
-  }, [id]);
+  }, [id, items]);
 
   async function handleWearToday() {
     if (!item) return;
@@ -54,7 +65,10 @@ export default function ItemDetail() {
       return;
     }
 
+    // Update both local state and context
     setItem(data);
+    updateItem(item.id, { wear_count: newWearCount, last_worn: today });
+    
     setSaving(false);
     setMessage('Logged that you wore this today!');
   }
@@ -99,7 +113,7 @@ export default function ItemDetail() {
     if (count < 10) {
       return 'Nice, this item is getting some love. Keep rewearing instead of buying new.';
     }
-    return 'Amazing! You really made the most of this piece – that’s great for your wallet and the planet.';
+    return 'Amazing! You really made the most of this piece – that&apos;s sustainable fashion.';
   }
 
   if (loading) {
@@ -113,43 +127,43 @@ export default function ItemDetail() {
   return (
     <>
       <Navbar />
-        <section className="card">
-          <h2>{item.name}</h2>
-          <p style={{ fontSize: '0.9rem', color: '#9ca3af' }}>
-            {item.category} · {item.brand_type.replace('_', ' ')}{' '}
-            {item.purchase_year ? `· bought in ${item.purchase_year}` : ''}
+      <section className="card">
+        <h2>{item.name}</h2>
+        <p style={{ fontSize: '0.9rem', color: '#9ca3af' }}>
+          {item.category} · {item.brand_type.replace('_', ' ')}{' '}
+          {item.purchase_year ? `· bought in ${item.purchase_year}` : ''}
+        </p>
+
+        <p>
+          Worn <strong>{item.wear_count}</strong> times.
+          {item.last_worn && (
+            <span style={{ fontSize: '0.85rem', color: '#9ca3af', marginLeft: '0.3rem' }}>
+              Last worn: {item.last_worn}
+            </span>
+          )}
+        </p>
+
+        <button type="button" onClick={handleWearToday} disabled={saving}>
+          {saving ? 'Logging…' : 'I wore this today'}
+        </button>
+
+        {message && <p className="success" role="status">{message}</p>}
+
+        <div style={{ marginTop: '1rem' }}>
+          <h3>Wear &amp; sustainability</h3>
+          <p style={{ fontSize: '0.9rem' }}>{getWearMessage()}</p>
+        </div>
+
+        <div style={{ marginTop: '1rem' }}>
+          <h3>Care advice</h3>
+          <p style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+            Washing less often and on lower temperatures saves water and energy, and makes clothes last longer.
           </p>
-
-          <p>
-            Worn <strong>{item.wear_count}</strong> times.
-            {item.last_worn && (
-              <span style={{ fontSize: '0.85rem', color: '#9ca3af', marginLeft: '0.3rem' }}>
-                Last worn: {item.last_worn}
-              </span>
-            )}
-          </p>
-
-          <button type="button" onClick={handleWearToday} disabled={saving}>
-            {saving ? 'Logging…' : 'I wore this today'}
-          </button>
-
-          {message && <p className="success" role="status">{message}</p>}
-
-          <div style={{ marginTop: '1rem' }}>
-            <h3>Wear &amp; sustainability</h3>
-            <p style={{ fontSize: '0.9rem' }}>{getWearMessage()}</p>
+          <div style={{ fontSize: '0.9rem' }}>
+            {getCareAdvice()}
           </div>
-
-          <div style={{ marginTop: '1rem' }}>
-            <h3>Care advice</h3>
-            <p style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-              Washing less often and on lower temperatures saves water and energy, and makes clothes last longer.
-            </p>
-            <div style={{ fontSize: '0.9rem' }}>
-              {getCareAdvice()}
-            </div>
-          </div>
-        </section>
+        </div>
+      </section>
     </>
   );
 }

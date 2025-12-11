@@ -1,43 +1,17 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+// src/components/Chart.jsx
+import { useItems } from '../context/ItemsContext';
 
-const WEARS_PER_AVOIDED_ITEM = 10;
-const CO2_PER_AVOIDED_ITEM = 5; // kg
 const GOAL_CO2 = 150; // kg
 
 export default function Chart() {
-  const [co2Saved, setCo2Saved] = useState(0);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchItems() {
-      setLoading(true);
-      const { data, error } = await supabase.from('items').select('wear_count');
-
-      if (error) {
-        console.error('Error fetching items for chart:', error);
-        setLoading(false);
-        return;
-      }
-
-      const totalWears = data.reduce(
-        (sum, item) => sum + (item.wear_count || 0),
-        0
-      );
-      const avoidedItems = Math.floor(totalWears / WEARS_PER_AVOIDED_ITEM);
-      const saved = avoidedItems * CO2_PER_AVOIDED_ITEM;
-
-      setCo2Saved(saved);
-      setLoading(false);
-    }
-
-    fetchItems();
-  }, []);
+  const { co2Saved, loading } = useItems();
 
   if (loading) {
     return (
-      <div className="chart-container">
-        <p style={{ color: '#9ca3af', textAlign: 'center' }}>Loading…</p>
+      <div className="progress-chart-container">
+        <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <p style={{ color: '#9ca3af' }}>Loading…</p>
+        </div>
       </div>
     );
   }

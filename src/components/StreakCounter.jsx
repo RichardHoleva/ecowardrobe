@@ -1,26 +1,16 @@
+// src/components/StreakCounter.jsx
 import { useEffect, useState } from 'react';
+import { useUser } from '../context/UserContext';
 import { supabase } from '../lib/supabaseClient';
 
 export default function StreakCounter() {
+  const { user, profile, updateProfile } = useUser();
   const [streak, setStreak] = useState(0);
 
   useEffect(() => {
-    async function fetchAndUpdateStreak() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+    if (!user || !profile) return;
 
-      // Get user's profile with streak data
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('streak_count, last_login_date')
-        .eq('id', user.id)
-        .single();
-
-      if (error) {
-        console.error('Error fetching streak:', error);
-        return;
-      }
-
+    async function updateStreak() {
       const today = new Date().toISOString().split('T')[0];
       const lastLogin = profile?.last_login_date;
       let newStreak = profile?.streak_count || 0;
@@ -38,20 +28,27 @@ export default function StreakCounter() {
         }
 
         // Update streak in database
-        await supabase
+        const { data, error } = await supabase
           .from('profiles')
           .update({
             streak_count: newStreak,
             last_login_date: today
           })
-          .eq('id', user.id);
-      }
+          .eq('id', user.id)
+          .select()
+          .single();
 
-      setStreak(newStreak);
+        if (!error && data) {
+          updateProfile(data);
+          setStreak(newStreak);
+        }
+      } else {
+        setStreak(newStreak);
+      }
     }
 
-    fetchAndUpdateStreak();
-  }, []);
+    updateStreak();
+  }, [user, profile, updateProfile]);
 
   return (
     <div className="streak-counter">

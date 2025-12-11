@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+// src/pages/Home.jsx
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { useUser } from '../context/UserContext';
+import { useItems } from '../context/ItemsContext';
 import Navbar from '../components/Navbar';
 import Chart from '../components/Chart';
 import Filter from '../components/Filter';
@@ -9,49 +11,19 @@ import ItemCard from '../components/ItemCard';
 import Logo from '../assets/logo.png';
 
 export default function Home() {
-  const [user, setUser] = useState(null);
-  const [items, setItems] = useState([]);
+  const { user } = useUser();
+  const { items, loading } = useItems();
   const [filteredCategory, setFilteredCategory] = useState('all');
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    async function fetchUser() {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-    }
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
-    async function fetchItems() {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('items')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(6); // Show only 6 most recent items on home page
-
-      if (error) {
-        console.error('Error fetching items:', error);
-        setLoading(false);
-        return;
-      }
-
-      setItems(data || []);
-      setLoading(false);
-    }
-
-    fetchItems();
-  }, []);
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'User';
 
   // Filter items based on selected category
+  const recentItems = items.slice(0, 6);
   const visibleItems =
     filteredCategory === 'all'
-      ? items
-      : items.filter((item) => item.category === filteredCategory);
+      ? recentItems
+      : recentItems.filter((item) => item.category === filteredCategory);
 
   return (
     <div className="home-page">
@@ -82,19 +54,19 @@ export default function Home() {
       <Filter onFilterChange={setFilteredCategory} />
 
       {/* Display Items */}
-      <div className="items-container" style={{ padding: '0 1rem', marginBottom: '5rem' }}>
-        {loading ? (
-          <p style={{ textAlign: 'center', color: '#9ca3af' }}>Loading items...</p>
-        ) : visibleItems.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#9ca3af' }}>
-            No items yet. Add your first item to get started!
-          </p>
-        ) : (
-          visibleItems.map((item) => (
-            <ItemCard key={item.id} item={item} />
-          ))
-        )}
-      </div>
+          <div className="items-grid">
+            {loading ? (
+              <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#9ca3af' }}>Loading items...</p>
+            ) : visibleItems.length === 0 ? (
+              <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#9ca3af' }}>
+                No items yet. Add your first item to get started!
+              </p>
+            ) : (
+              visibleItems.map((item) => (
+                <ItemCard key={item.id} item={item} />
+              ))
+            )}
+          </div>
 
       <Navbar />
     </div>
