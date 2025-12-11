@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { useItems } from '../context/ItemsContext';
@@ -19,11 +19,30 @@ export default function Home() {
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'User';
 
   // Filter items based on selected category
-  const recentItems = items.slice(0, 6);
+  const recentItems = items.slice(0, 12);
   const visibleItems =
     filteredCategory === 'all'
       ? recentItems
       : recentItems.filter((item) => item.category === filteredCategory);
+
+  const hasMultipleRows = visibleItems.length > 1;
+  const itemsGridClass = hasMultipleRows ? 'items-grid multi-row' : 'items-grid single-row';
+
+  useEffect(() => {
+    const progressElement = document.getElementById('scrollProgress');
+    if (progressElement) {
+      progressElement.style.width = '0%';
+    }
+  }, [itemsGridClass]);
+
+  function handleItemsScroll(e) {
+    const { scrollWidth, clientWidth, scrollLeft } = e.target;
+    const progressElement = document.getElementById('scrollProgress');
+    if (!progressElement) return;
+    const scrollableWidth = scrollWidth - clientWidth;
+    const progress = scrollableWidth > 0 ? (scrollLeft / scrollableWidth) * 100 : 0;
+    progressElement.style.width = `${progress}%`;
+  }
 
   return (
     <div className="home-page">
@@ -54,19 +73,24 @@ export default function Home() {
       <Filter onFilterChange={setFilteredCategory} />
 
       {/* Display Items */}
-          <div className="items-grid">
-            {loading ? (
-              <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#9ca3af' }}>Loading items...</p>
-            ) : visibleItems.length === 0 ? (
-              <p style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#9ca3af' }}>
-                No items yet. Add your first item to get started!
-              </p>
-            ) : (
-              visibleItems.map((item) => (
-                <ItemCard key={item.id} item={item} />
-              ))
-            )}
-          </div>
+      <div className="items-grid-wrapper">
+        <div className="scroll-progress-bar">
+          <div className="scroll-progress-fill" id="scrollProgress"></div>
+        </div>
+        <div className={itemsGridClass} onScroll={handleItemsScroll}>
+          {loading ? (
+            <p className="items-empty-message">Loading items...</p>
+          ) : visibleItems.length === 0 ? (
+            <p className="items-empty-message">
+              No items yet. Add your first item to get started!
+            </p>
+          ) : (
+            visibleItems.map((item) => (
+              <ItemCard key={item.id} item={item} />
+            ))
+          )}
+        </div>
+      </div>
 
       <Navbar />
     </div>

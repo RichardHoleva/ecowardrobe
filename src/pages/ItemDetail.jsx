@@ -1,17 +1,21 @@
 // src/pages/ItemDetail.jsx
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useItems } from '../context/ItemsContext';
 import Navbar from '../components/Navbar';
 
 export default function ItemDetail() {
   const { id } = useParams();
-  const { items, updateItem } = useItems();
+  const navigate = useNavigate();
+  const { items, updateItem, deleteItem } = useItems();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [message, setMessage] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     // First check if item exists in context (faster)
@@ -73,6 +77,76 @@ export default function ItemDetail() {
     setMessage('Logged that you wore this today!');
   }
 
+  async function handleDelete() {
+    if (!item) return;
+    if (!confirm(`Delete "${item.name}"? This cannot be undone.`)) return;
+
+    setDeleting(true);
+
+    const { error } = await supabase
+      .from('items')
+      .delete()
+      .eq('id', item.id);
+
+    if (error) {
+      console.error('Error deleting item:', error);
+      setMessage('Could not delete item. Please try again.');
+      setDeleting(false);
+      return;
+    }
+
+    deleteItem(item.id);
+    navigate('/wardrobe');
+  }
+
+  async function handleImageUpload(e) {
+    const file = e.target.files?.[0];
+    if (!file || !item) return;
+
+    setUploading(true);
+    setMessage('');
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('item-images')
+      .upload(fileName, file);
+
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError);
+      setMessage('Failed to upload image.');
+      setUploading(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('item-images')
+      .getPublicUrl(fileName);
+
+    const { data, error } = await supabase
+      .from('items')
+      .update({ image_url: publicUrl })
+      .eq('id', item.id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating image:', error);
+      setMessage('Failed to update image.');
+      setUploading(false);
+      return;
+    }
+
+    setItem(data);
+    updateItem(item.id, { image_url: publicUrl });
+    setMessage('Image updated!');
+    setUploading(false);
+  }
+
   function getCareAdvice() {
     // SUPER simple care advice based on category – you can expand this.
     if (!item) return null;
@@ -117,53 +191,100 @@ export default function ItemDetail() {
   }
 
   if (loading) {
-    return <p>Loading item…</p>;
+    return (
+      <>
+        <Navbar />
+        <div className="detail-page">
+          <p style={{ textAlign: 'center', color: '#9ca3af' }}>Loading...</p>
+        </div>
+      </>
+    );
   }
 
   if (!item) {
-    return <p>Item not found.</p>;
+    return (
+      <>
+        <Navbar />
+        <div className="detail-page">
+          <p style={{ textAlign: 'center', color: '#9ca3af' }}>Item not found.</p>
+        </div>
+      </>
+    );
   }
 
   return (
     <>
       <Navbar />
-      <section className="card">
-        <h2>{item.name}</h2>
-        <p style={{ fontSize: '0.9rem', color: '#9ca3af' }}>
-          {item.category} · {item.brand_type.replace('_', ' ')}{' '}
-          {item.purchase_year ? `· bought in ${item.purchase_year}` : ''}
-        </p>
-
-        <p>
-          Worn <strong>{item.wear_count}</strong> times.
-          {item.last_worn && (
-            <span style={{ fontSize: '0.85rem', color: '#9ca3af', marginLeft: '0.3rem' }}>
-              Last worn: {item.last_worn}
-            </span>
-          )}
-        </p>
-
-        <button type="button" onClick={handleWearToday} disabled={saving}>
-          {saving ? 'Logging…' : 'I wore this today'}
+      <div className="detail-page">
+        <button className="back-btn" onClick={() => navigate(-1)}>
+          <i className="fas fa-arrow-left"></i>
         </button>
 
-        {message && <p className="success" role="status">{message}</p>}
-
-        <div style={{ marginTop: '1rem' }}>
-          <h3>Wear &amp; sustainability</h3>
-          <p style={{ fontSize: '0.9rem' }}>{getWearMessage()}</p>
+        <div className="detail-image">
+          {item.image_url ? (
+            <img src={item.image_url} alt={item.name} />
+          ) : (
+            <div className="detail-no-image">
+              <i className="fas fa-tshirt"></i>
+            </div>
+          )}
+          <button 
+            className="edit-image-btn" 
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            title="Change photo"
+          >
+            <i className="fas fa-camera"></i>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            style={{ display: 'none' }}
+          />
         </div>
 
-        <div style={{ marginTop: '1rem' }}>
-          <h3>Care advice</h3>
-          <p style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-            Washing less often and on lower temperatures saves water and energy, and makes clothes last longer.
+        <div className="detail-content">
+          <h1 className="detail-title">{item.name}</h1>
+          <p className="detail-meta">
+            {item.category} · {item.brand_type.replace('_', ' ')}
           </p>
-          <div style={{ fontSize: '0.9rem' }}>
+
+          <div className="detail-wear-info">
+            <span className="wear-label">Worn</span>
+            <span className="wear-number">{item.wear_count || 0}</span>
+            <span className="wear-label">times</span>
+          </div>
+
+          {item.last_worn && (
+            <p className="last-worn">Last worn: {item.last_worn}</p>
+          )}
+
+          <button className="btn-wear" onClick={handleWearToday} disabled={saving}>
+            {saving ? 'Logging...' : 'I wore this today'}
+          </button>
+
+          {message && <p className="detail-message">{message}</p>}
+
+          <div className="detail-section">
+            <h3>Sustainability</h3>
+            <p>{getWearMessage()}</p>
+          </div>
+
+          <div className="detail-section">
+            <h3>Care tips</h3>
+            <p className="care-intro">
+              Washing less often and on lower temperatures saves water and energy.
+            </p>
             {getCareAdvice()}
           </div>
+
+          <button className="btn-delete" onClick={handleDelete} disabled={deleting}>
+            {deleting ? 'Deleting...' : 'Delete Item'}
+          </button>
         </div>
-      </section>
+      </div>
     </>
   );
 }
