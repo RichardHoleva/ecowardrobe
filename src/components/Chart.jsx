@@ -43,54 +43,33 @@ export default function Chart() {
   }
 
   const percentage = Math.min((co2Saved / GOAL_CO2) * 100, 100);
-  const circumference = 2 * Math.PI * 70; // radius = 70
-  const strokeDashoffset = circumference - (percentage / 100) * circumference;
-
-  // Calculate km equivalent (assuming ~0.068 kg CO2 per km)
   const kmEquivalent = Math.round(co2Saved / 0.068);
 
   return (
-    <>
-    <div className="donut-chart-container">
-      <h3 className="donut-chart-label">CO₂ savings</h3>
+    <div className="progress-chart-container">
+      <h3 className="progress-chart-title">Your CO₂ savings</h3>
       
-      <div className="donut-chart-wrapper">
-        <svg width="120" height="120" viewBox="0 0 200 200">
-          {/* Background circle */}
-          <circle
-            cx="100"
-            cy="100"
-            r="70"
-            fill="none"
-            stroke="#1a3a2e"
-            strokeWidth="20"
+      <div className="progress-chart-value">
+        <span className="progress-value">{co2Saved} kg</span>
+        <span className="progress-label">/ {GOAL_CO2} kg</span>
+      </div>
+
+      <div className="progress-bar-wrapper">
+        <div className="progress-bar-background">
+          <div 
+            className="progress-bar-fill"
+            style={{ width: `${percentage}%` }}
           />
-          {/* Progress arc */}
-          <circle
-            cx="100"
-            cy="100"
-            r="70"
-            fill="none"
-            stroke="#F0FF1B"
-            strokeWidth="20"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            transform="rotate(-90 100 100)"
-            style={{ transition: 'stroke-dashoffset 0.5s ease' }}
-          />
-        </svg>
-        
-        <div className="donut-chart-center">
-          <div className="donut-chart-value">{co2Saved}</div>
-          <div className="donut-chart-unit">kg</div>
         </div>
       </div>
-      
-      <div className="donut-chart-goal">Goal: {GOAL_CO2} kg</div>
+
+      <p className="progress-chart-equivalent">
+        = {kmEquivalent} km of driving avoided <i className="fa-solid fa-car-side"></i>
+      </p>
+
+      <p className="progress-chart-footnote">
+        Rewearing what you own reduces the CO₂ footprint of fashion production.
+      </p>
     </div>
-    <div className="donut-chart-equivalent">
-        Equivalent to {kmEquivalent} km of driving <i className="fa-solid fa-car-side"></i>
-    </div>
-    </>
   );
 }

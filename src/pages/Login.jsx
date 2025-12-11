@@ -22,26 +22,23 @@ export default function Login() {
         return;
       }
 
-      // Try Supabase authentication if configured
-      if (supabase) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) {
-          // If Supabase fails, still allow navigation for development
-          console.warn('Supabase auth failed:', error.message);
-        }
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
       }
-      
-      // Navigate to home regardless (for development/testing)
-      navigate('/home');
+
+      if (data.user) {
+        navigate('/home');
+      }
     } catch (err) {
       console.error('Login error:', err);
-      // Still navigate even if there's an error (for development)
-      navigate('/home');
-    } finally {
+      setError('An unexpected error occurred');
       setLoading(false);
     }
   };

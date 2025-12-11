@@ -35,25 +35,24 @@ export default function Register() {
         return;
       }
 
-      // Try Supabase authentication if configured
-      if (supabase) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
-        if (error) {
-          console.warn('Supabase signup failed:', error.message);
-        }
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
       }
-      
-      // Navigate to goal setup after registration
-      navigate('/goal-setup');
+
+      if (data.user) {
+        // Navigate to home after successful registration
+        navigate('/home');
+      }
     } catch (err) {
       console.error('Registration error:', err);
-      // Still navigate to goal setup even if there's an error (for development)
-      navigate('/goal-setup');
-    } finally {
+      setError('An unexpected error occurred');
       setLoading(false);
     }
   };

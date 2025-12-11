@@ -15,41 +15,51 @@ export default function AddItem() {
   const [successMsg, setSuccessMsg] = useState('');
 
   async function handleSubmit(e) {
-    e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
+  e.preventDefault();
+  setErrorMsg('');
+  setSuccessMsg('');
 
-    if (!name.trim()) {
-      setErrorMsg('Please enter a name for the item.');
-      return;
-    }
-
-    setLoading(true);
-
-    const { error } = await supabase.from('items').insert([
-      {
-        name: name.trim(),
-        category,
-        brand_type: brandType,
-        purchase_year: purchaseYear ? Number(purchaseYear) : null,
-      },
-    ]);
-
-    if (error) {
-      console.error('Error adding item:', error);
-      setErrorMsg('Something went wrong while saving. Please try again.');
-      setLoading(false);
-      return;
-    }
-
-    setSuccessMsg('Item added to your wardrobe!');
-    setLoading(false);
-
-    // small delay then go to wardrobe
-    setTimeout(() => {
-      navigate('/wardrobe');
-    }, 800);
+  if (!name.trim()) {
+    setErrorMsg('Please enter a name for the item.');
+    return;
   }
+
+  setLoading(true);
+
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    setErrorMsg('You must be logged in to add items.');
+    setLoading(false);
+    return;
+  }
+
+  const { error } = await supabase.from('items').insert([
+    {
+      name: name.trim(),
+      category,
+      brand_type: brandType,
+      purchase_year: purchaseYear ? Number(purchaseYear) : null,
+      user_id: user.id, // ✅ Add this line
+    },
+  ]);
+
+  if (error) {
+    console.error('Error adding item:', error);
+    setErrorMsg('Something went wrong while saving. Please try again.');
+    setLoading(false);
+    return;
+  }
+
+  setSuccessMsg('Item added to your wardrobe!');
+  setLoading(false);
+
+  // small delay then go to wardrobe
+  setTimeout(() => {
+    navigate('/wardrobe');
+  }, 800);
+}
 
   return (
     <>
