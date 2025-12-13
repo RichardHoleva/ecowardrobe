@@ -25,7 +25,7 @@ export default function Home() {
       ? recentItems
       : recentItems.filter((item) => item.category === filteredCategory);
 
-  const hasMultipleRows = visibleItems.length > 1;
+  const hasMultipleRows = visibleItems.length > 2;
   const itemsGridClass = hasMultipleRows ? 'items-grid multi-row' : 'items-grid single-row';
 
   useEffect(() => {

@@ -118,16 +118,8 @@ export default function AddItem() {
   return (
     <>
       <Navbar />
-      <div className="add-item-page" style={{ 
-        minHeight: '100vh',
-        paddingBottom: '120px',
-        paddingTop: '1rem'
-      }}>
-        <div className="add-item-container" style={{
-          maxWidth: '500px',
-          margin: '0 auto',
-          padding: '0 1.5rem'
-        }}>
+      <div className="add-item-page">
+        <div className="add-item-container">
           <div className="modal-header">
             <h2>Add Item</h2>
             <p>Add a new piece to your wardrobe</p>

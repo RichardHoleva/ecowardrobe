@@ -648,14 +648,17 @@ label {
 
 .add-item-page {
   min-height: 100vh;
-  padding: 0.5rem 1rem;
-  padding-bottom: 120px;
+  padding: 1rem 1rem 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .add-item-container {
   max-width: 500px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 0.5rem;
+  padding: 0 1.5rem;
 }
 
 .modal-header {
