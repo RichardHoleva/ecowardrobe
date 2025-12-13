@@ -9,6 +9,22 @@ export default function ItemCard({ item }) {
   const { updateItem } = useItems();
   const [updating, setUpdating] = useState(false);
 
+  // Get appropriate icon based on category
+  const getCategoryIcon = (category) => {
+    switch (category) {
+      case 'top':
+        return 'fa-shirt';
+      case 'bottom':
+        return 'fa-socks';
+      case 'shoes':
+        return 'fa-shoe-prints';
+      case 'outerwear':
+        return 'fa-mitten';
+      default:
+        return 'fa-shirt';
+    }
+  };
+
   async function handleWearChange(e, increment) {
     e.stopPropagation();
     if (updating) return;
@@ -39,7 +55,7 @@ export default function ItemCard({ item }) {
           <img src={item.image_url} alt={item.name} />
         ) : (
           <div className="item-no-image">
-            <i className="fas fa-tshirt"></i>
+            <i className={`fas ${getCategoryIcon(item.category)}`}></i>
           </div>
         )}
       </div>

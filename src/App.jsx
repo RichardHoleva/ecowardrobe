@@ -6,6 +6,7 @@ import Wardrobe from './pages/Wardrobe.jsx';
 import AddItem from './pages/AddItem.jsx';
 import ItemDetail from './pages/ItemDetail.jsx';
 import Register from './pages/Register.jsx';
+import Profile from './pages/Profile.jsx';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/add" element={<AddItem />} />
         <Route path="/item/:id" element={<ItemDetail />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </>
   );

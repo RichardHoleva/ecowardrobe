@@ -14,16 +14,27 @@ export default function Home() {
   const { user } = useUser();
   const { items, loading } = useItems();
   const [filteredCategory, setFilteredCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   const firstName = user?.user_metadata?.full_name?.split(' ')[0] || 'User';
 
-  // Filter items based on selected category
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+  };
+
+  // Filter items based on selected category and search query
   const recentItems = items.slice(0, 12);
-  const visibleItems =
-    filteredCategory === 'all'
-      ? recentItems
-      : recentItems.filter((item) => item.category === filteredCategory);
+  const visibleItems = recentItems.filter((item) => {
+    // Filter by category
+    const matchesCategory = filteredCategory === 'all' || item.category === filteredCategory;
+    
+    // Filter by search query (case insensitive)
+    const matchesSearch = searchQuery === '' || 
+      item.name.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
 
   const hasMultipleRows = visibleItems.length > 2;
   const itemsGridClass = hasMultipleRows ? 'items-grid multi-row' : 'items-grid single-row';
@@ -66,11 +77,14 @@ export default function Home() {
       <div className='wardrobe-preview'>
         <h3 className='wardrobe-preview-title'>Your Wardrobe</h3>
         <h3 className='wardrobe-preview-link' onClick={() => navigate('/wardrobe')}>
-          See All &rarr;
+          See Wardrobe &rarr;
         </h3>
       </div>
       
-      <Filter onFilterChange={setFilteredCategory} />
+      <Filter 
+        onFilterChange={setFilteredCategory}
+        onSearchChange={handleSearchChange}
+      />
 
       {/* Display Items */}
       <div className="items-grid-wrapper">
@@ -82,7 +96,9 @@ export default function Home() {
             <p className="items-empty-message">Loading items...</p>
           ) : visibleItems.length === 0 ? (
             <p className="items-empty-message">
-              No items yet. Add your first item to get started!
+              {searchQuery
+                ? `No items found matching "${searchQuery}"`
+                : 'No items yet. Add your first item to get started!'}
             </p>
           ) : (
             visibleItems.map((item) => (

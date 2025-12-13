@@ -16,7 +16,7 @@ export default function Navbar() {
         </NavLink>
         <NavLink to="/wardrobe">
           <div className="nav-icon-container">
-            <i class="fa-solid fa-user"></i>
+            <i class="fa-solid fa-shirt"></i>
           </div>
         </NavLink>
       </nav>

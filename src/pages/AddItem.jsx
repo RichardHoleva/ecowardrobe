@@ -20,6 +20,22 @@ export default function AddItem() {
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
+  // Get appropriate icon based on category
+  const getCategoryIcon = (cat) => {
+    switch (cat) {
+      case 'top':
+        return 'fa-shirt';
+      case 'bottom':
+        return 'fa-socks';
+      case 'shoes':
+        return 'fa-shoe-prints';
+      case 'outerwear':
+        return 'fa-mitten';
+      default:
+        return 'fa-shirt';
+    }
+  };
+
   const handleImageSelect = (e) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -142,13 +158,18 @@ export default function AddItem() {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    className="upload-btn"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    + Upload Photos
-                  </button>
+                  <div style={{ textAlign: 'center' }}>
+                    <div className="item-no-image" style={{ fontSize: '3rem', marginBottom: '1rem', color: '#6b7280' }}>
+                      <i className={`fas ${getCategoryIcon(category)}`}></i>
+                    </div>
+                    <button
+                      type="button"
+                      className="upload-btn"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      + Upload Photos
+                    </button>
+                  </div>
                 )}
                 <input
                   ref={cameraInputRef}
