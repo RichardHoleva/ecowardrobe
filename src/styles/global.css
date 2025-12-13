@@ -7,10 +7,8 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Raleway', sans-serif;
   background: #0E0E0E;
   color: #e5e7eb;
-  position: relative;
   min-height: 100vh;
 }
-
 
 .app {
   min-height: 100vh;
@@ -67,7 +65,6 @@ body {
   filter: blur(80px);
 }
 
-/* Mobile-friendly cards */
 .card {
   background: #1a1a1a;
   border-radius: 0.75rem;
@@ -76,9 +73,7 @@ body {
   border: 1px solid #3a3a3a;
 }
 
-button,
-input,
-select {
+button, input, select {
   font-family: inherit;
 }
 
@@ -105,7 +100,6 @@ label {
   font-size: 0.85rem;
 }
 
-
 .error {
   color: #f97373;
   font-size: 0.8rem;
@@ -116,10 +110,7 @@ label {
   font-size: 0.85rem;
 }
 
-
-/*-------LOGIN.CSS------*/
-
-/* Auth Page Styles */
+/* Auth Page */
 .auth-wrapper {
   min-height: 100vh;
   display: flex;
@@ -127,7 +118,6 @@ label {
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  position: relative;
   text-align: center;
 }
 
@@ -159,7 +149,7 @@ label {
 
 .auth-subtitle {
   font-size: 1.1rem;
-  font-weight: 400; 
+  font-weight: 400;
   color: #ffffff;
   margin: 0 0 0.5rem;
 }
@@ -195,7 +185,6 @@ label {
   margin-bottom: 1rem;
 }
 
-
 .btn-secondary {
   background: #272727;
   color: #E3E3E3;
@@ -211,8 +200,6 @@ label {
   position: absolute;
   left: 1rem;
 }
-
-
 
 .divider {
   display: flex;
@@ -247,15 +234,13 @@ label {
   text-decoration: underline;
 }
 
-/*-------LOGIN PAGE------*/
-
+/* Login Page */
 .login-page {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  position: relative;
   text-align: center;
 }
 
@@ -329,17 +314,19 @@ label {
   font-weight: 600;
 }
 
-/*-------NAVBAR (BOTTOM NAVIGATION)------*/
-
+/* Navbar */
 .navbar {
   position: fixed;
   bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
   width: fit-content;
-  background-color: #ffffff1a;
+  background: rgba(26, 26, 26, 0.95);
+  backdrop-filter: blur(10px);
   padding: 12px;
   border-radius: 50px;
+  border: 1px solid rgba(58, 58, 58, 0.6);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   z-index: 1000;
 }
 
@@ -362,11 +349,12 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.1);
+  background: rgba(42, 42, 42, 0.6);
+  transition: background 0.3s ease;
 }
 
 .navbar a.active .nav-icon-container {
-  background-color: #2d6a4f;
+  background: #2d6a4f;
 }
 
 .navbar a.active .nav-icon-container i {
@@ -378,8 +366,7 @@ label {
   color: white;
 }
 
-/*-------Chart Styles------*/
-
+/* Charts */
 .chart-card {
   margin-bottom: 1rem;
   background: #1a1a1a;
@@ -388,18 +375,16 @@ label {
 }
 
 .chart-title {
-  margin-top: 0;
-  margin-bottom: 1rem;
+  margin: 0 0 1rem;
   color: #ffffff;
   font-size: 1.25rem;
   font-weight: 600;
 }
 
 .chart-subtitle {
-  margin: 0;
+  margin: 0 0 1.5rem;
   font-size: 0.9rem;
   color: #9ca3af;
-  margin-bottom: 1.5rem;
 }
 
 .chart-inner {
@@ -408,14 +393,12 @@ label {
 }
 
 .chart-footnote {
-  margin-top: 1rem;
-  margin-bottom: 0;
+  margin: 1rem 0 0;
   font-size: 0.75rem;
   color: #6b7280;
   text-align: center;
 }
 
-/* Recharts styling overrides */
 .recharts-cartesian-grid-horizontal line,
 .recharts-cartesian-grid-vertical line {
   stroke: #2d5a45;
@@ -431,7 +414,7 @@ label {
 }
 
 .recharts-default-tooltip {
-  background-color: #0d1f1a !important;
+  background: #0d1f1a !important;
   border: 1px solid #2d5a45 !important;
   border-radius: 0.5rem !important;
   padding: 0.5rem !important;
@@ -447,31 +430,19 @@ label {
   color: #F0FF1B !important;
 }
 
-/* Recharts bar color override */
 .chart-bar {
   fill: #F0FF1B;
 }
 
-/* Remove all focus outlines from chart */
-.recharts-wrapper *,
-.recharts-surface *,
-.chart-container * {
+.recharts-wrapper *, .recharts-surface *, .chart-container * {
   outline: none !important;
 }
 
-/*-------END OF CHARTS STYLING----*/
-
-/*-------HOME PAGE------*/
-
+/* Home Page */
 .home-page {
   min-height: 100vh;
-  padding: 1.5rem 1rem;
-  padding-bottom: 120px;
-  position: relative;
+  padding: 1.5rem 1rem 120px;
 }
-
-
-
 
 .home-header {
   display: flex;
@@ -556,7 +527,7 @@ label {
   font-weight: 700;
 }
 
-.greeting{
+.greeting {
   font-weight: 300;
   color: #9ca3af;
 }
@@ -568,7 +539,6 @@ label {
   font-weight: 400;
 }
 
-/* Progress Bar Chart Styles */
 .progress-chart-container {
   background: #1a1a1a;
   border-radius: 1rem;
@@ -614,7 +584,6 @@ label {
   background: #2a2a2a;
   border-radius: 10px;
   overflow: hidden;
-  position: relative;
 }
 
 .progress-bar-fill {
@@ -642,10 +611,7 @@ label {
   line-height: 1.4;
 }
 
-/*-------END OF HOME PAGE----*/
-
-/*-------ADD ITEM PAGE------*/
-
+/* Add Item Page */
 .add-item-page {
   min-height: 100vh;
   padding: 1rem 1rem 120px;
@@ -664,7 +630,6 @@ label {
 .modal-header {
   text-align: center;
   padding: 1rem 1rem 0.75rem;
-  position: relative;
 }
 
 .modal-header h2 {
@@ -692,7 +657,6 @@ label {
   gap: 1rem;
 }
 
-/* Image Upload */
 .image-upload {
   background: transparent;
   border: 2px solid #2a2a2a;
@@ -745,7 +709,6 @@ label {
   padding: 0;
 }
 
-/* Form Fields */
 .form-field {
   display: flex;
   flex-direction: column;
@@ -758,8 +721,7 @@ label {
   font-weight: 500;
 }
 
-.form-field input,
-.form-field select {
+.form-field input, .form-field select {
   width: 100%;
   padding: 0.75rem 0.9rem;
   background: #1A1A1A;
@@ -767,8 +729,6 @@ label {
   border-radius: 0.5rem;
   color: #ffffff;
   font-size: 0.95rem;
-  -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
 }
 
@@ -780,8 +740,7 @@ label {
   padding-right: 2.5rem;
 }
 
-.form-field input:focus,
-.form-field select:focus {
+.form-field input:focus, .form-field select:focus {
   outline: none;
   border-color: #F0FF1B;
 }
@@ -818,10 +777,7 @@ label {
   opacity: 0.6;
 }
 
-/*-------END OF ADD ITEM PAGE----*/
-
-/*-------Filter Component------*/
-
+/* Filter */
 .filter-wrapper {
   display: flex;
   flex-direction: column;
@@ -845,7 +801,7 @@ label {
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 2.75rem 0.75rem 2.75rem;
+  padding: 0.75rem 2.75rem;
   background: #1a1a1a;
   border: 1px solid #3a3a3a;
   border-radius: 999px;
@@ -877,12 +833,6 @@ label {
   justify-content: center;
   font-size: 0.9rem;
   padding: 0;
-  cursor: pointer;
-}
-
-.search-clear-btn:hover {
-  background: #3a3a3a;
-  color: #ffffff;
 }
 
 .wardrobe-preview {
@@ -911,7 +861,6 @@ label {
   margin-bottom: 1.5rem;
   gap: 0.4rem;
   flex-wrap: nowrap;
-
 }
 
 .filter-container button {
@@ -931,8 +880,7 @@ label {
   color: #022c22;
 }
 
-/*-------Item Card------*/
-
+/* Items Grid */
 .items-grid-wrapper {
   position: relative;
   padding: 0 1rem;
@@ -964,7 +912,6 @@ label {
   overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: none;
-  position: relative;
 }
 
 .items-grid::-webkit-scrollbar {
@@ -1086,8 +1033,7 @@ label {
   color: #ffffff;
 }
 
-/*-------Item Detail Page------*/
-
+/* Item Detail */
 .detail-page {
   min-height: 100vh;
   padding: 1rem 1rem 120px;
@@ -1105,10 +1051,11 @@ label {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0;  /* Remove any bottom margin */
+  margin-bottom: 0;
   padding: 0;
-  flex-shrink: 0;  /* Prevent shrinking */
+  flex-shrink: 0;
 }
+
 .detail-image {
   width: 100%;
   max-width: 250px;
@@ -1264,8 +1211,7 @@ label {
   opacity: 0.6;
 }
 
-/*-------WARDROBE PAGE------*/
-
+/* Wardrobe Page */
 .wardrobe-page {
   min-height: 100vh;
   padding: 1.5rem 1rem 120px;
@@ -1299,6 +1245,14 @@ label {
   justify-content: center;
   font-size: 1.1rem;
   padding: 0;
+  overflow: hidden;
+}
+
+.profile-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .wardrobe-subtitle {
@@ -1315,9 +1269,6 @@ label {
   margin-top: 1.5rem;
 }
 
-
-
-/* Compact Item Card for Wardrobe Grid */
 .item-card.compact {
   padding: 0.5rem;
 }
@@ -1351,10 +1302,7 @@ label {
   font-size: 0.9rem;
 }
 
-/*-------END OF WARDROBE PAGE----*/
-
-/*-------PROFILE PAGE------*/
-
+/* Profile Page */
 .profile-page {
   min-height: 100vh;
   padding: 1.5rem 1rem 120px;
@@ -1365,9 +1313,9 @@ label {
 .profile-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;  /* This should keep them aligned */
+  align-items: center;
   margin-bottom: 2rem;
-  gap: 1rem;  /* Add gap for better spacing */
+  gap: 1rem;
 }
 
 .profile-title {
@@ -1377,8 +1325,9 @@ label {
   margin: 0;
   flex: 1;
   text-align: center;
-  line-height: 1;  /* Ensure consistent line height */
+  line-height: 1;
 }
+
 .edit-btn {
   width: 40px;
   height: 40px;
@@ -1391,8 +1340,9 @@ label {
   justify-content: center;
   font-size: 0.9rem;
   padding: 0;
-  flex-shrink: 0;  /* Prevent shrinking */
+  flex-shrink: 0;
 }
+
 .profile-avatar {
   text-align: center;
   margin-bottom: 2rem;
@@ -1496,15 +1446,7 @@ label {
   gap: 0.5rem;
 }
 
-.logout-btn:hover {
-  background: #ef4444;
-  color: #ffffff;
-}
-
-/*-------END OF PROFILE PAGE----*/
-
-/*-------EDIT PROFILE------*/
-
+/* Edit Profile */
 .edit-profile-overlay {
   position: fixed;
   top: 0;
@@ -1591,6 +1533,4 @@ label {
 .edit-profile-form .submit-btn {
   max-width: 400px;
 }
-
-/*-------END OF EDIT PROFILE----*/
 

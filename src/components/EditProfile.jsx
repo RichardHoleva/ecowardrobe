@@ -50,6 +50,9 @@ export default function EditProfile({ onClose }) {
           .getPublicUrl(uploadData.path);
 
         avatarUrl = urlData.publicUrl;
+      } else if (avatarPreview === null && profile?.avatar_url) {
+        // If avatar was removed, set to null
+        avatarUrl = null;
       }
 
       // Update user metadata (name)
@@ -71,7 +74,9 @@ export default function EditProfile({ onClose }) {
 
       updateProfile(profileData);
       setMessage('Profile updated successfully!');
-      setTimeout(() => onClose(), 1500);
+      setTimeout(() => {
+        onClose();
+      }, 800);
     } catch (error) {
       console.error('Error updating profile:', error);
       setMessage('Failed to update profile');
@@ -96,7 +101,16 @@ export default function EditProfile({ onClose }) {
             <div className="image-upload">
               {avatarPreview ? (
                 <div className="image-preview-box">
-                  <img src={avatarPreview} alt="Avatar preview" />
+                  <label htmlFor="avatar-change-input" style={{ cursor: 'pointer', display: 'block' }}>
+                    <img src={avatarPreview} alt="Avatar preview" />
+                  </label>
+                  <input
+                    id="avatar-change-input"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    style={{ display: 'none' }}
+                  />
                   <button
                     type="button"
                     onClick={handleRemoveImage}

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useItems } from '../context/ItemsContext';
+import { useUser } from '../context/UserContext';
 import ItemCard from '../components/ItemCard.jsx';
 import Navbar from '../components/Navbar';
 import Filter from '../components/Filter';
@@ -11,6 +12,7 @@ const categories = ['all', 'top', 'bottom', 'shoes', 'outerwear'];
 export default function Wardrobe() {
   const navigate = useNavigate();
   const { items, loading } = useItems();
+  const { profile } = useUser();
   const [filteredCategory, setFilteredCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -34,6 +36,8 @@ export default function Wardrobe() {
     return matchesCategory && matchesSearch;
   });
 
+  const avatarUrl = profile?.avatar_url;
+
   return (
     <>
       <Navbar />
@@ -45,7 +49,11 @@ export default function Wardrobe() {
             className="profile-icon-btn"
             aria-label="View account"
           >
-            <i className="fa-solid fa-user"></i>
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="Profile" className="profile-icon-img" />
+            ) : (
+              <i className="fa-solid fa-user"></i>
+            )}
           </button>
         </div>
 
@@ -56,11 +64,9 @@ export default function Wardrobe() {
         <Filter onFilterChange={handleFilterChange} onSearchChange={handleSearchChange} />
 
         {loading ? (
-          <p style={{ textAlign: 'center', color: '#9ca3af', marginTop: '2rem' }}>
-            Loading your wardrobe...
-          </p>
+          <p className="loading-text">Loading your wardrobe...</p>
         ) : visibleItems.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#9ca3af', marginTop: '2rem' }}>
+          <p className="no-items-text">
             {searchQuery
               ? `No items found matching "${searchQuery}"`
               : filteredCategory === 'all'
