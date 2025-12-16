@@ -8,12 +8,17 @@ export default defineConfig({
   build: {
     minify: 'terser',
     cssMinify: true,
+    sourcemap: false, // Disable sourcemaps in production
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
+          supabase: ['@supabase/supabase-js'],
         },
       },
     },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
   },
 })

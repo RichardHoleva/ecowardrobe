@@ -754,6 +754,10 @@ label {
   color: #ffffff;
 }
 
+.form-field select option[value=""] {
+  color: #6b7280;
+}
+
 .form-field .hint {
   font-size: 0.75rem;
   color: #9ca3af;
@@ -1534,3 +1538,57 @@ label {
   max-width: 400px;
 }
 
+.see-full-wardrobe-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-row: 1 / -1;
+  min-width: 180px;
+  padding: 0 1rem;
+}
+
+.see-full-wardrobe-btn {
+  background: #1E4A2B;
+  color: #F0FF1B;
+  border: none;
+  border-radius: 999px;
+  padding: 0.65rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.see-full-wardrobe-btn:hover {
+  background: #2d6a4f;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(240, 255, 27, 0.2);
+}
+
+.see-full-wardrobe-btn .arrow {
+  font-size: 1.1rem;
+  font-weight: bold;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.see-full-wardrobe-btn:hover .arrow {
+  transform: translateX(4px);
+}
+
+.see-full-wardrobe-wrapper {
+  display: none;
+}
+
+.see-full-wardrobe-card {
+  display: none;
+}
+
+.see-full-wardrobe-content {
+  display: none;
+}

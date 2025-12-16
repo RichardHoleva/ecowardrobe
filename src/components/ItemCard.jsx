@@ -1,10 +1,11 @@
 // src/components/ItemCard.jsx
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useItems } from '../context/ItemsContext';
 
-export default function ItemCard({ item }) {
+
+ function ItemCard({ item }) {
   const navigate = useNavigate();
   const { updateItem } = useItems();
   const [updating, setUpdating] = useState(false);
@@ -52,7 +53,7 @@ export default function ItemCard({ item }) {
     <div className="item-card" onClick={handleCardClick}>
       <div className="item-image">
         {item.image_url ? (
-          <img src={item.image_url} alt={item.name} />
+          <img src={item.image_url} alt={item.name} loading='lazy'/>
         ) : (
           <div className="item-no-image">
             <i className={`fas ${getCategoryIcon(item.category)}`}></i>
@@ -87,3 +88,5 @@ export default function ItemCard({ item }) {
     </div>
   );
 }
+
+export default memo(ItemCard);

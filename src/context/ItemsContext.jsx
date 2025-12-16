@@ -20,19 +20,24 @@ export function ItemsProvider({ children }) {
   }, [user]);
 
   async function fetchItems() {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('items')
-      .select('*')
-      .order('created_at', { ascending: false });
+  setLoading(true);
+  const { data, error } = await supabase
+    .from('items')
+    .select('*')
+    .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching items:', error);
-    } else {
-      setItems(data || []);
-    }
-    setLoading(false);
+  if (error) {
+    console.error('Error fetching items:', error);
+  } else {
+    // Transform image URLs to use smaller thumbnails if Supabase supports it
+    const itemsWithOptimizedImages = data?.map(item => ({
+      ...item,
+      image_url: item.image_url ? `${item.image_url}?width=400&quality=80` : null
+    }));
+    setItems(itemsWithOptimizedImages || []);
   }
+  setLoading(false);
+}
 
   const addItem = (newItem) => {
     setItems([newItem, ...items]);

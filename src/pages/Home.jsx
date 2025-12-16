@@ -24,7 +24,7 @@ export default function Home() {
   };
 
   // Filter items based on selected category and search query
-  const recentItems = items.slice(0, 12);
+  const recentItems = items.slice(0, 8);
   const visibleItems = recentItems.filter((item) => {
     // Filter by category
     const matchesCategory = filteredCategory === 'all' || item.category === filteredCategory;
@@ -101,9 +101,19 @@ export default function Home() {
                 : 'No items yet. Add your first item to get started!'}
             </p>
           ) : (
-            visibleItems.map((item) => (
-              <ItemCard key={item.id} item={item} />
-            ))
+            <>
+              {visibleItems.map((item) => (
+                <ItemCard key={item.id} item={item} />
+              ))}
+              {!searchQuery && items.length > 8 && (
+                <div className="see-full-wardrobe-container">
+                  <button className="see-full-wardrobe-btn" onClick={() => navigate('/wardrobe')}>
+                    <span>Full Wardrobe</span>
+                    <span className="arrow">→</span>
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

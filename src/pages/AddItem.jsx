@@ -5,13 +5,69 @@ import { supabase } from '../lib/supabaseClient';
 import { useItems } from '../context/ItemsContext';
 import Navbar from '../components/Navbar';
 
+// Convert any image to WebP format with compression
+async function convertToWebP(file, maxWidth = 1200, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      const img = new Image();
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Calculate new dimensions while maintaining aspect ratio
+        let width = img.width;
+        let height = img.height;
+        
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw image on canvas
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convert to WebP blob
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              // Create a new File object with .webp extension
+              const webpFile = new File(
+                [blob], 
+                file.name.replace(/\.[^/.]+$/, '.webp'),
+                { type: 'image/webp' }
+              );
+              resolve(webpFile);
+            } else {
+              reject(new Error('Canvas to Blob conversion failed'));
+            }
+          },
+          'image/webp',
+          quality
+        );
+      };
+      
+      img.onerror = () => reject(new Error('Image loading failed'));
+      img.src = e.target.result;
+    };
+    
+    reader.onerror = () => reject(new Error('File reading failed'));
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function AddItem() {
   const navigate = useNavigate();
   const { refetch } = useItems();
 
   const [name, setName] = useState('');
-  const [category, setCategory] = useState('top');
-  const [brandType, setBrandType] = useState('fast_fashion');
+  const [category, setCategory] = useState('');
+  const [brandType, setBrandType] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -36,15 +92,24 @@ export default function AddItem() {
     }
   };
 
-  const handleImageSelect = (e) => {
+  const handleImageSelect = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      try {
+        // Convert to WebP for better performance
+        const webpFile = await convertToWebP(file);
+        setImageFile(webpFile);
+        
+        // Create preview
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(webpFile);
+      } catch (error) {
+        console.error('Error converting image:', error);
+        setErrorMsg('Failed to process image. Please try another file.');
+      }
     }
   };
 
@@ -65,6 +130,16 @@ export default function AddItem() {
       return;
     }
 
+    if (!category) {
+      setErrorMsg('Please select a category.');
+      return;
+    }
+
+    if (!brandType) {
+      setErrorMsg('Please select a type.');
+      return;
+    }
+
     setLoading(true);
 
     // Get current user
@@ -80,12 +155,16 @@ export default function AddItem() {
 
     // Upload image if provided
     if (imageFile) {
-      const fileExt = imageFile.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      // File is already WebP from handleImageSelect
+      const fileName = `${user.id}/${Date.now()}.webp`;
       
       const { error: uploadError } = await supabase.storage
         .from('item-images')
-        .upload(fileName, imageFile);
+        .upload(fileName, imageFile, {
+          contentType: 'image/webp',
+          cacheControl: '3600',
+          upsert: false
+        });
 
       if (uploadError) {
         console.error('Error uploading image:', uploadError);
@@ -159,9 +238,11 @@ export default function AddItem() {
                   </div>
                 ) : (
                   <div style={{ textAlign: 'center' }}>
-                    <div className="item-no-image" style={{ fontSize: '3rem', marginBottom: '1rem', color: '#6b7280' }}>
-                      <i className={`fas ${getCategoryIcon(category)}`}></i>
-                    </div>
+                    {category && (
+                      <div className="item-no-image" style={{ fontSize: '3rem', marginBottom: '1rem', color: '#6b7280' }}>
+                        <i className={`fas ${getCategoryIcon(category)}`}></i>
+                      </div>
+                    )}
                     <button
                       type="button"
                       className="upload-btn"
@@ -207,7 +288,9 @@ export default function AddItem() {
                   id="category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
+                  required
                 >
+                  <option value="">Select category</option>
                   <option value="top">Top</option>
                   <option value="bottom">Bottom</option>
                   <option value="shoes">Shoes</option>
@@ -221,7 +304,9 @@ export default function AddItem() {
                   id="brandType"
                   value={brandType}
                   onChange={(e) => setBrandType(e.target.value)}
+                  required
                 >
+                  <option value="">Select type</option>
                   <option value="fast_fashion">Fast fashion</option>
                   <option value="second_hand">Second-hand</option>
                   <option value="sustainable">Sustainable brand</option>
