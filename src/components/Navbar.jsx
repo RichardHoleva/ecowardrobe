@@ -1,25 +1,24 @@
-import { Link } from 'react-router-dom';
-import { Icons } from './Icons';
+import { NavLink } from 'react-router-dom';
 
 export default function Navbar() {
   return (
     <div className="navbar">
       <nav>
-        <Link to="/home">
+        <NavLink to="/home" end>
           <div className="nav-icon-container">
-            <Icons.Home className="nav-icon" />
+            <i class="fa-solid fa-house" ></i>
           </div>
-        </Link>
-        <Link to="/add">
-          <div className="nav-icon-container nav-icon-primary">
-            <Icons.Plus className="nav-icon" />
-          </div>
-        </Link>
-        <Link to="/wardrobe">
+        </NavLink>
+        <NavLink to="/add">
           <div className="nav-icon-container">
-            <Icons.Shirt className="nav-icon" />
+            <i class="fa-solid fa-plus"></i>
           </div>
-        </Link>
+        </NavLink>
+        <NavLink to="/wardrobe">
+          <div className="nav-icon-container">
+            <i class="fa-solid fa-shirt"></i>
+          </div>
+        </NavLink>
       </nav>
     </div>
   );

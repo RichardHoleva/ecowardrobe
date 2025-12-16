@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { Icons } from './Icons';
+import React, { useState } from 'react';
 import "../styles/global.css";
 
 export default function Filter({ onFilterChange, onSearchChange }) {
@@ -22,7 +21,7 @@ export default function Filter({ onFilterChange, onSearchChange }) {
     return (
         <div className="filter-wrapper">
             <div className="search-bar-container">
-                <Icons.Search className="search-icon" />
+                <i className="fa-solid fa-magnifying-glass search-icon"></i>
                 <input
                     type="text"
                     placeholder="Search items..."
@@ -41,7 +40,7 @@ export default function Filter({ onFilterChange, onSearchChange }) {
                         className="search-clear-btn"
                         aria-label="Clear search"
                     >
-                        <Icons.Close className="icon-sm" />
+                        <i className="fa-solid fa-xmark"></i>
                     </button>
                 )}
             </div>
