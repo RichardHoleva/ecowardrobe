@@ -1,5 +1,5 @@
 // src/context/ItemsContext.jsx
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useUser } from './UserContext';
 
@@ -10,6 +10,27 @@ export function ItemsProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
 
+  const fetchItems = useCallback(async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('items')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching items:', error);
+      setItems([]);
+    } else {
+      // Transform image URLs to use smaller thumbnails if Supabase supports it
+      const itemsWithOptimizedImages = data?.map(item => ({
+        ...item,
+        image_url: item.image_url ? `${item.image_url}?width=400&quality=80` : null
+      }));
+      setItems(itemsWithOptimizedImages || []);
+    }
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
     if (user) {
       fetchItems();
@@ -17,45 +38,32 @@ export function ItemsProvider({ children }) {
       setItems([]);
       setLoading(false);
     }
-  }, [user]);
+  }, [user, fetchItems]);
 
-  async function fetchItems() {
-  setLoading(true);
-  const { data, error } = await supabase
-    .from('items')
-    .select('*')
-    .order('created_at', { ascending: false });
+  const addItem = useCallback((newItem) => {
+    setItems(prev => [newItem, ...prev]);
+  }, []);
 
-  if (error) {
-    console.error('Error fetching items:', error);
-  } else {
-    // Transform image URLs to use smaller thumbnails if Supabase supports it
-    const itemsWithOptimizedImages = data?.map(item => ({
-      ...item,
-      image_url: item.image_url ? `${item.image_url}?width=400&quality=80` : null
-    }));
-    setItems(itemsWithOptimizedImages || []);
-  }
-  setLoading(false);
-}
+  const updateItem = useCallback((id, updates) => {
+    setItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
+  }, []);
 
-  const addItem = (newItem) => {
-    setItems([newItem, ...items]);
-  };
+  const deleteItem = useCallback((id) => {
+    setItems(prev => prev.filter(item => item.id !== id));
+  }, []);
 
-  const updateItem = (id, updates) => {
-    setItems(items.map(item => item.id === id ? { ...item, ...updates } : item));
-  };
+  const totalWears = useMemo(
+    () => items.reduce((sum, item) => sum + (item.wear_count || 0), 0),
+    [items]
+  );
 
-  const deleteItem = (id) => {
-    setItems(items.filter(item => item.id !== id));
-  };
+  const co2Saved = useMemo(
+    () => Math.floor(totalWears / 10) * 5,
+    [totalWears]
+  );
 
-  const totalWears = items.reduce((sum, item) => sum + (item.wear_count || 0), 0);
-  const co2Saved = Math.floor(totalWears / 10) * 5;
-
-  return (
-    <ItemsContext.Provider value={{ 
+  const value = useMemo(
+    () => ({ 
       items, 
       loading, 
       addItem, 
@@ -64,7 +72,12 @@ export function ItemsProvider({ children }) {
       refetch: fetchItems,
       totalWears,
       co2Saved 
-    }}>
+    }),
+    [items, loading, addItem, updateItem, deleteItem, fetchItems, totalWears, co2Saved]
+  );
+
+  return (
+    <ItemsContext.Provider value={value}>
       {children}
     </ItemsContext.Provider>
   );

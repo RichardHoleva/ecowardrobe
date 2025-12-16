@@ -1,11 +1,11 @@
 // src/components/StreakCounter.jsx
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { useUser } from '../context/UserContext';
 import { supabase } from '../lib/supabaseClient';
 
-export default function StreakCounter() {
+function StreakCounter() {
   const { user, profile, updateProfile } = useUser();
-  const [streak, setStreak] = useState(0);
+  const [streak, setStreak] = useState(profile?.streak_count || 0);
 
   useEffect(() => {
     if (!user || !profile) return;
@@ -48,7 +48,7 @@ export default function StreakCounter() {
     }
 
     updateStreak();
-  }, [user, profile, updateProfile]);
+  }, [user, profile?.last_login_date, profile?.streak_count, updateProfile]);
 
   return (
     <div className="streak-counter">
@@ -57,3 +57,5 @@ export default function StreakCounter() {
     </div>
   );
 }
+
+export default memo(StreakCounter);

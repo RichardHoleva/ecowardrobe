@@ -222,7 +222,13 @@ export default function ItemDetail() {
 
         <div className="detail-image">
           {item.image_url ? (
-            <img src={item.image_url} alt={item.name} />
+            <img 
+              src={item.image_url} 
+              alt={item.name}
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+            />
           ) : (
             <div className="detail-no-image">
               <i className="fas fa-tshirt"></i>

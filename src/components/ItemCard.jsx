@@ -53,7 +53,12 @@ import { useItems } from '../context/ItemsContext';
     <div className="item-card" onClick={handleCardClick}>
       <div className="item-image">
         {item.image_url ? (
-          <img src={item.image_url} alt={item.name} loading='lazy'/>
+          <img 
+            src={item.image_url} 
+            alt={item.name} 
+            loading="lazy"
+            decoding="async"
+          />
         ) : (
           <div className="item-no-image">
             <i className={`fas ${getCategoryIcon(item.category)}`}></i>

@@ -59,7 +59,7 @@ export default function Home() {
     <div className="home-page">
       <div className="home-header">
         <div className="home-logo">
-          <img src={Logo} alt="Logo" />
+          <img src={Logo} alt="Logo" loading="lazy" />
         </div>
         <StreakCounter />
       </div>

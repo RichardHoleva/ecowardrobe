@@ -1,9 +1,10 @@
 // src/components/Chart.jsx
+import { memo } from 'react';
 import { useItems } from '../context/ItemsContext';
 
 const GOAL_CO2 = 150; // kg
 
-export default function Chart() {
+function Chart() {
   const { co2Saved, loading } = useItems();
 
   if (loading) {
@@ -47,3 +48,5 @@ export default function Chart() {
     </div>
   );
 }
+
+export default memo(Chart);

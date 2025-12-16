@@ -38,6 +38,7 @@ body {
   border-radius: 50%;
   z-index: -1;
   pointer-events: none;
+  will-change: filter;
 }
 
 .glow1 {
@@ -591,6 +592,7 @@ label {
   background: #F0FF1B;
   border-radius: 10px;
   transition: width 0.5s ease;
+  will-change: width;
 }
 
 .progress-chart-equivalent {

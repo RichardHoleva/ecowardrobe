@@ -1,5 +1,5 @@
 // src/context/UserContext.jsx
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
 const UserContext = createContext();
@@ -8,6 +8,19 @@ export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const fetchProfile = useCallback(async (userId) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (!error && data) {
+      setProfile(data);
+    }
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
     // Get initial session
@@ -32,27 +45,19 @@ export function UserProvider({ children }) {
     });
 
     return () => subscription.unsubscribe();
+  }, [fetchProfile]);
+
+  const updateProfile = useCallback((newProfile) => {
+    setProfile(newProfile);
   }, []);
 
-  async function fetchProfile(userId) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-
-    if (!error && data) {
-      setProfile(data);
-    }
-    setLoading(false);
-  }
-
-  const updateProfile = (newProfile) => {
-    setProfile(newProfile);
-  };
+  const value = useMemo(
+    () => ({ user, profile, loading, updateProfile }),
+    [user, profile, loading, updateProfile]
+  );
 
   return (
-    <UserContext.Provider value={{ user, profile, loading, updateProfile }}>
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );
