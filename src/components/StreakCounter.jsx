@@ -2,6 +2,7 @@
 import { useEffect, useState, memo } from 'react';
 import { useUser } from '../context/UserContext';
 import { supabase } from '../lib/supabaseClient';
+import { Icons } from './Icons';
 
 function StreakCounter() {
   const { user, profile, updateProfile } = useUser();
@@ -52,7 +53,7 @@ function StreakCounter() {
 
   return (
     <div className="streak-counter">
-      <i className="fa-solid fa-fire"></i>
+      <Icons.Fire className="streak-icon" />
       <span className="streak-number">{streak}</span>
     </div>
   );

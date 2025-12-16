@@ -1,16 +1,36 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import logo from '../assets/logo.webp';
 import google from '../assets/google.png';
 import apple from '../assets/apple.png';
+import '../styles/global.css';
 
 export default function Intro() {
   const navigate = useNavigate();
+
+  // Preload critical routes
+  useEffect(() => {
+    // Preload login page after initial render
+    const timer = setTimeout(() => {
+      import('./Login.jsx');
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="auth-wrapper">
       <div>
         <div className="logo-circle" aria-label="EcoWardrobe logo">
-          <img src={logo} alt="EcoWardrobe Logo" loading="eager" width="100" height="100" fetchpriority="high" />
+          <img 
+            src={logo} 
+            alt="EcoWardrobe Logo" 
+            loading="eager" 
+            width="100" 
+            height="100" 
+            fetchpriority="high"
+            decoding="sync"
+          />
         </div>
 
         <h2 className="auth-subtitle">Welcome to the</h2>
@@ -38,7 +58,7 @@ export default function Intro() {
           className="btn btn-secondary btn-full"
           aria-disabled="true"
         >
-          <img src={google} alt="" />
+          <img src={google} alt="" loading="lazy" width="20" height="20" />
           Sign in with Google
         </button>
 
@@ -47,7 +67,7 @@ export default function Intro() {
           className="btn btn-secondary btn-full"
           aria-disabled="true"
         >
-          <img src={apple} alt=""/>
+          <img src={apple} alt="" loading="lazy" width="20" height="20" />
           Sign in with Apple
         </button>
 

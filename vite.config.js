@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   base: process.env.NODE_ENV === 'production' ? '/ecowardrobe/' : '/',
   build: {
+    target: 'es2020',
     minify: 'terser',
     cssMinify: true,
     sourcemap: false,
@@ -13,6 +14,8 @@ export default defineConfig({
       compress: {
         drop_console: true,
         drop_debugger: true,
+        passes: 2,
+        pure_funcs: ['console.log', 'console.info', 'console.debug']
       },
     },
     rollupOptions: {
@@ -21,10 +24,11 @@ export default defineConfig({
           'react-vendor': ['react', 'react-dom'],
           'router': ['react-router-dom'],
           'supabase': ['@supabase/supabase-js'],
+          'charts': ['recharts'],
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 500,
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],

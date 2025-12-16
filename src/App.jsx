@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import Intro from './pages/Intro.jsx'; // Don't lazy load the intro page
 
-const Intro = lazy(() => import('./pages/Intro.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
 const Register = lazy(() => import('./pages/Register.jsx'));
 const Home = lazy(() => import('./pages/Home.jsx'));
