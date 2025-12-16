@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import logo from '../assets/logo.webp';
 import google from '../assets/google.png';
 import apple from '../assets/apple.png';
-import '../styles/global.css';
+
 
 export default function Intro() {
   const navigate = useNavigate();

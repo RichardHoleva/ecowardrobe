@@ -1,4 +1,4 @@
-// src/pages/Home.jsx
+// src/pages/Home.jsx - Updated
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
@@ -24,15 +24,12 @@ export default function Home() {
   };
 
   // Filter items based on selected category and search query
+  // Only show first 8 items on home page
   const recentItems = items.slice(0, 8);
   const visibleItems = recentItems.filter((item) => {
-    // Filter by category
     const matchesCategory = filteredCategory === 'all' || item.category === filteredCategory;
-    
-    // Filter by search query (case insensitive)
     const matchesSearch = searchQuery === '' || 
       item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    
     return matchesCategory && matchesSearch;
   });
 
@@ -86,7 +83,7 @@ export default function Home() {
         onSearchChange={handleSearchChange}
       />
 
-      {/* Display Items */}
+      {/* Display Items - Home shows max 8 items, no infinite scroll needed */}
       <div className="items-grid-wrapper">
         <div className="scroll-progress-bar">
           <div className="scroll-progress-fill" id="scrollProgress"></div>
