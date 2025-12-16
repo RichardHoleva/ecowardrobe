@@ -26,6 +26,10 @@ export default defineConfig({
           'supabase': ['@supabase/supabase-js'],
           'charts': ['recharts'],
         },
+        // Add hashes for better caching
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       },
     },
     chunkSizeWarningLimit: 500,

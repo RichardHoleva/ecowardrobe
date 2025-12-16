@@ -1,16 +1,14 @@
-// src/components/ItemCard.jsx
 import { useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useItems } from '../context/ItemsContext';
 
-
- function ItemCard({ item }) {
+function ItemCard({ item, compact, priority = false }) {
   const navigate = useNavigate();
   const { updateItem } = useItems();
   const [updating, setUpdating] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Get appropriate icon based on category
   const getCategoryIcon = (category) => {
     switch (category) {
       case 'top':
@@ -49,49 +47,52 @@ import { useItems } from '../context/ItemsContext';
     navigate(`/item/${item.id}`);
   }
 
-  return (
-    <div className="item-card" onClick={handleCardClick}>
-      <div className="item-image">
-        {item.image_url ? (
-          <img 
-            src={item.image_url} 
-            alt={item.name} 
-            loading="lazy"
-            decoding="async"
-          />
-        ) : (
-          <div className="item-no-image">
-            <i className={`fas ${getCategoryIcon(item.category)}`}></i>
-          </div>
-        )}
+return (
+      <div className="item-card" onClick={handleCardClick}>
+        <div className={`item-image ${item.image_url && !imageLoaded ? 'loading' : ''}`}>
+          {item.image_url ? (
+            <img 
+              src={item.image_url} 
+              alt={item.name}
+              loading={priority ? "eager" : "lazy"}
+              decoding="async"
+              fetchpriority={priority ? "high" : "auto"}
+              onLoad={() => setImageLoaded(true)}
+              style={{ opacity: imageLoaded ? 1 : 0 }}
+            />
+          ) : (
+            <div className="item-no-image">
+              <i className={`fas ${getCategoryIcon(item.category)}`}></i>
+            </div>
+          )}
+        </div>
+        
+        <div className="item-info">
+          <h3 className="item-name">{item.name}</h3>
+          <p className="item-category">{item.category}</p>
+        </div>
+        
+        <div className="item-wear">
+          <button 
+            className="wear-btn" 
+            onClick={(e) => handleWearChange(e, -1)}
+            disabled={updating || item.wear_count === 0}
+            aria-label="Decrease wear count"
+          >
+            −
+          </button>
+          <span className="wear-count">{item.wear_count || 0}</span>
+          <button 
+            className="wear-btn" 
+            onClick={(e) => handleWearChange(e, 1)}
+            disabled={updating}
+            aria-label="Increase wear count"
+          >
+            +
+          </button>
+        </div>
       </div>
-      
-      <div className="item-info">
-        <h3 className="item-name">{item.name}</h3>
-        <p className="item-category">{item.category}</p>
-      </div>
-      
-      <div className="item-wear">
-        <button 
-          className="wear-btn" 
-          onClick={(e) => handleWearChange(e, -1)}
-          disabled={updating || item.wear_count === 0}
-          aria-label="Decrease wear count"
-        >
-          −
-        </button>
-        <span className="wear-count">{item.wear_count || 0}</span>
-        <button 
-          className="wear-btn" 
-          onClick={(e) => handleWearChange(e, 1)}
-          disabled={updating}
-          aria-label="Increase wear count"
-        >
-          +
-        </button>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default memo(ItemCard);

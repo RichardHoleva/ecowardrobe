@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Intro from './pages/Intro.jsx'; // Don't lazy load the intro page
 
 const Login = lazy(() => import('./pages/Login.jsx'));
@@ -23,13 +23,15 @@ const LoadingFallback = () => (
 );
 
 export default function App() {
+  const location = useLocation();
+  
   return (
     <>
       <div className="glow-blur glow1"></div>
       <div className="glow-blur glow2"></div>
       <div className="glow-blur glow3"></div>
       
-      <Suspense fallback={<LoadingFallback />}>
+      <Suspense fallback={<LoadingFallback />} key={location.pathname}>
         <Routes>
           <Route path="/" element={<Intro />} />
           <Route path="/login" element={<Login />} />

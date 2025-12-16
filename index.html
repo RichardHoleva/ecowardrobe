@@ -4,10 +4,30 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://supabase.co" />
-    <link rel="dns-prefetch" href="https://supabase.co" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"></noscript>
+    
+    <!-- Preconnect to actual Supabase CDN domain -->
+    <link rel="preconnect" href="https://bpehesyjymddceranmrp.supabase.co" />
+    <link rel="dns-prefetch" href="https://bpehesyjymddceranmrp.supabase.co" />
+    
+    <!-- Preconnect to Cloudflare for Font Awesome -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    
+    <!-- Font Awesome with font-display: swap -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" as="style" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <style>
+      /* Add font-display: swap for Font Awesome fonts */
+      @font-face {
+        font-family: 'Font Awesome 6 Free';
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'Font Awesome 6 Brands';
+        font-display: swap;
+      }
+    </style>
+    
     <title>EcoWardrobe</title>
     <script>
       (function(l) {

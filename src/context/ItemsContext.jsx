@@ -24,9 +24,12 @@ export function ItemsProvider({ children }) {
       // Transform image URLs to use smaller thumbnails if Supabase supports it
       const itemsWithOptimizedImages = data?.map(item => ({
         ...item,
-        image_url: item.image_url ? `${item.image_url}?width=400&quality=80` : null
+        image_url: item.image_url 
+          ? `${item.image_url}?width=300&height=300&quality=75&resize=cover` 
+          : null
       }));
-      setItems(itemsWithOptimizedImages || []);
+      
+            setItems(itemsWithOptimizedImages || []);
     }
     setLoading(false);
   }, []);

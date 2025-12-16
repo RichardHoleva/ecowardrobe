@@ -99,8 +99,12 @@ export default function Home() {
             </p>
           ) : (
             <>
-              {visibleItems.map((item) => (
-                <ItemCard key={item.id} item={item} />
+              {visibleItems.map((item, index) => (
+                <ItemCard 
+                  key={item.id} 
+                  item={item} 
+                  priority={index < 2} // First 2 images get priority loading
+                />
               ))}
               {!searchQuery && items.length > 8 && (
                 <div className="see-full-wardrobe-container">
