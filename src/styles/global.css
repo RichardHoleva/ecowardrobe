@@ -787,6 +787,8 @@ label {
   border-radius: 0.75rem;
   padding: 0.75rem;
   border: 1px solid #3a3a3a;
+  content-visibility: auto;
+  contain-intrinsic-size: 260px 320px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

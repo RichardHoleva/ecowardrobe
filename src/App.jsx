@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Intro from './pages/Intro.jsx'; // Don't lazy load the intro page
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Intro from './pages/Intro.jsx';
 
 const Login = lazy(() => import('./pages/Login.jsx'));
 const Register = lazy(() => import('./pages/Register.jsx'));
@@ -11,27 +11,26 @@ const ItemDetail = lazy(() => import('./pages/ItemDetail.jsx'));
 const Profile = lazy(() => import('./pages/Profile.jsx'));
 
 const LoadingFallback = () => (
-  <div style={{ 
-    display: 'flex', 
-    alignItems: 'center', 
-    justifyContent: 'center', 
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     minHeight: '100vh',
-    color: '#9ca3af' 
+    color: '#9ca3af'
   }}>
     Loading...
   </div>
 );
 
 export default function App() {
-  const location = useLocation();
-  
   return (
     <>
       <div className="glow-blur glow1"></div>
       <div className="glow-blur glow2"></div>
       <div className="glow-blur glow3"></div>
-      
-      <Suspense fallback={<LoadingFallback />} key={location.pathname}>
+
+      {/* Do NOT key <Suspense> by route; that forces unmount/remount on every navigation */}
+      <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/" element={<Intro />} />
           <Route path="/login" element={<Login />} />
