@@ -79,7 +79,7 @@ export default function Filter({ onFilterChange, onSearchChange }) {
                     className={selectedFilter === 'outerwear' ? 'active' : ''}
                     onClick={() => handleFilter('outerwear')}
                 >
-                    Outerwear
+                    Outwear
                 </button>
             </div>
         </div>

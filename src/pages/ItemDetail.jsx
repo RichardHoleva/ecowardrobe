@@ -231,9 +231,9 @@ export default function ItemDetail() {
               fetchpriority="high"
             />
           ) : (
-            <div className="detail-no-image">
-              <FAIcon icon={COMMON_ICON.shirt} />
-            </div>
+          <div className="detail-no-image">
+            <FAIcon icon={CATEGORY_ICON[item.category] || COMMON_ICON.shirt} />
+          </div>
           )}
           <button 
             className="edit-image-btn" 
