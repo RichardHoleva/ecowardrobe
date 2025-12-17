@@ -14,6 +14,7 @@ function ItemCard({ item, compact, priority = false }) {
 
   const icon = CATEGORY_ICON[item.category] ?? CATEGORY_ICON.top;
 
+  // Generate optimized thumbnail URL for performance
   const imgSrc = useMemo(() => {
     if (item.image_thumb_url) return item.image_thumb_url;
     if (!item.image_url) return null;
@@ -25,6 +26,7 @@ function ItemCard({ item, compact, priority = false }) {
     });
   }, [item.image_thumb_url, item.image_url]);
 
+  // Create responsive image srcset
   const imgSrcSet = useMemo(() => {
     if (!item.image_url) return undefined;
     return getSupabaseSrcSet(item.image_url, {
@@ -35,6 +37,7 @@ function ItemCard({ item, compact, priority = false }) {
     });
   }, [item.image_url]);
 
+  // Update wear count in database and context
   const handleWearChange = useCallback(
     async (e, increment) => {
       e.stopPropagation();
@@ -58,6 +61,7 @@ function ItemCard({ item, compact, priority = false }) {
     [item.id, item.wear_count, updateItem]
   );
 
+  // Navigate to item detail page
   const handleCardClick = useCallback(() => {
     navigate(`/item/${item.id}`);
   }, [navigate, item.id]);

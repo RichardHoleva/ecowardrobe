@@ -6,11 +6,13 @@ export default function Filter({ onFilterChange, onSearchChange }) {
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
 
+    // Update category filter and notify parent component
     const handleFilter = (category) => {
         setSelectedFilter(category);
         onFilterChange(category);
     };
 
+    // Update search query as user types
     const handleSearch = (e) => {
         const query = e.target.value;
         setSearchQuery(query);
@@ -21,6 +23,7 @@ export default function Filter({ onFilterChange, onSearchChange }) {
 
     return (
         <div className="filter-wrapper">
+            {/* Search bar with clear button */}
             <div className="search-bar-container">
                 <FAIcon icon={COMMON_ICON.search} className="search-icon" />
                 <input
@@ -46,6 +49,7 @@ export default function Filter({ onFilterChange, onSearchChange }) {
                 )}
             </div>
 
+            {/* Category filter buttons */}
             <div className="filter-container">
                 <button
                     className={selectedFilter === 'all' ? 'active' : ''}

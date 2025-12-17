@@ -16,19 +16,20 @@ function StreakCounter() {
       const lastLogin = profile?.last_login_date;
       let newStreak = profile?.streak_count || 0;
 
+      // Only update if user hasn't logged in today
       if (lastLogin !== today) {
         const yesterday = new Date();
         yesterday.setDate(yesterday.getDate() - 1);
         const yesterdayStr = yesterday.toISOString().split('T')[0];
 
-        // Check if streak continues or resets
+        // Continue streak if logged in yesterday, reset if missed a day
         if (lastLogin === yesterdayStr) {
           newStreak += 1;
         } else if (lastLogin !== today) {
           newStreak = 1;
         }
 
-        // Update streak in database
+        // Save new streak count to database
         const { data, error } = await supabase
           .from('profiles')
           .update({

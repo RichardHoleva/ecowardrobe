@@ -17,7 +17,9 @@ function Chart() {
     );
   }
 
+  // Calculate progress percentage toward goal
   const percentage = Math.min((co2Saved / GOAL_CO2) * 100, 100);
+  // Convert CO2 to km equivalent (1 km ≈ 0.068 kg CO2)
   const kmEquivalent = Math.round(co2Saved / 0.068);
 
   return (
@@ -29,6 +31,7 @@ function Chart() {
         <span className="progress-label">/ {GOAL_CO2} kg</span>
       </div>
 
+      {/* Visual progress bar */}
       <div className="progress-bar-wrapper">
         <div className="progress-bar-background">
           <div 

@@ -11,6 +11,7 @@ export default function EditProfile({ onClose }) {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
+  // Preview selected image before upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -28,6 +29,7 @@ export default function EditProfile({ onClose }) {
     setAvatarPreview(null);
   };
 
+  // Upload avatar and update profile in database
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

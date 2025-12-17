@@ -19,7 +19,7 @@ export function ItemsProvider({ children }) {
 
   const cacheKey = user?.id ? `ecowardrobe.items.v1.${user.id}` : null;
 
-  // ✅ 3A: Read localStorage cache in idle time to reduce TBT / main-thread blocking
+  // Read cached items from localStorage for faster initial load
   useEffect(() => {
     if (!cacheKey) return;
 
@@ -47,6 +47,7 @@ export function ItemsProvider({ children }) {
     return () => clearTimeout(t);
   }, [cacheKey]);
 
+  // Fetch items from database and cache them
   const fetchItems = useCallback(async () => {
     if (!user?.id) return;
 
@@ -57,7 +58,7 @@ export function ItemsProvider({ children }) {
       .select(
         'id,name,category,brand_type,image_url,wear_count,last_worn,created_at,user_id'
       )
-      .eq('user_id', user.id) // ✅ critical: only fetch this user's items
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -67,6 +68,7 @@ export function ItemsProvider({ children }) {
       return;
     }
 
+    // Generate thumbnail URLs for better performance
     const itemsWithThumbs = (data || []).map((item) => ({
       ...item,
       image_thumb_url: item.image_url
@@ -142,10 +144,12 @@ export function ItemsProvider({ children }) {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
+  // Calculate total wears across all items
   const totalWears = useMemo(() => {
     return items.reduce((sum, item) => sum + (item.wear_count || 0), 0);
   }, [items]);
 
+  // Calculate CO2 saved (5kg per 10 wears)
   const co2Saved = useMemo(() => {
     return Math.floor(totalWears / 10) * 5;
   }, [totalWears]);

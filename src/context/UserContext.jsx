@@ -9,6 +9,7 @@ export function UserProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch user profile data from database
   const fetchProfile = useCallback(async (userId) => {
     const { data, error } = await supabase
       .from('profiles')
@@ -23,7 +24,7 @@ export function UserProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    // Get initial session
+    // Get initial session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -33,7 +34,7 @@ export function UserProvider({ children }) {
       }
     });
 
-    // Listen for auth changes
+    // Listen for auth state changes (login/logout)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -47,6 +48,7 @@ export function UserProvider({ children }) {
     return () => subscription.unsubscribe();
   }, [fetchProfile]);
 
+  // Update profile data from child components
   const updateProfile = useCallback((newProfile) => {
     setProfile(newProfile);
   }, []);

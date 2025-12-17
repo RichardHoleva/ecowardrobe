@@ -23,8 +23,7 @@ export default function Home() {
     setSearchQuery(query);
   };
 
-  // Filter items based on selected category and search query
-  // Only show first 8 items on home page
+  // Show only first 8 items on home page (preview)
   const recentItems = items.slice(0, 8);
   const visibleItems = recentItems.filter((item) => {
     const matchesCategory = filteredCategory === 'all' || item.category === filteredCategory;
@@ -33,6 +32,7 @@ export default function Home() {
     return matchesCategory && matchesSearch;
   });
 
+  // Adjust grid layout based on number of items
   const hasMultipleRows = visibleItems.length > 2;
   const itemsGridClass = hasMultipleRows ? 'items-grid multi-row' : 'items-grid single-row';
 
@@ -43,6 +43,7 @@ export default function Home() {
     }
   }, [itemsGridClass]);
 
+  // Update horizontal scroll progress indicator
   function handleItemsScroll(e) {
     const { scrollWidth, clientWidth, scrollLeft } = e.target;
     const progressElement = document.getElementById('scrollProgress');
@@ -83,7 +84,7 @@ export default function Home() {
         onSearchChange={handleSearchChange}
       />
 
-      {/* Display Items - Home shows max 8 items, no infinite scroll needed */}
+      {/* Display first 8 items with horizontal scroll */}
       <div className="items-grid-wrapper">
         <div className="scroll-progress-bar">
           <div className="scroll-progress-fill" id="scrollProgress"></div>
@@ -103,7 +104,7 @@ export default function Home() {
                 <ItemCard 
                   key={item.id} 
                   item={item} 
-                  priority={index < 2} // First 2 images get priority loading
+                  priority={index < 2}
                 />
               ))}
               {!searchQuery && items.length > 8 && (

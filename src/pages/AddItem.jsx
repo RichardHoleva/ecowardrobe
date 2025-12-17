@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabaseClient';
 import { useItems } from '../context/ItemsContext';
 import Navbar from '../components/Navbar';
 
-// Convert any image to WebP format with compression
+// Convert any image to WebP format for better performance
 async function convertToWebP(file, maxWidth = 1200, quality = 0.85) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -17,7 +17,7 @@ async function convertToWebP(file, maxWidth = 1200, quality = 0.85) {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         
-        // Calculate new dimensions while maintaining aspect ratio
+        // Resize image if larger than maxWidth
         let width = img.width;
         let height = img.height;
         
@@ -29,14 +29,12 @@ async function convertToWebP(file, maxWidth = 1200, quality = 0.85) {
         canvas.width = width;
         canvas.height = height;
         
-        // Draw image on canvas
         ctx.drawImage(img, 0, 0, width, height);
         
-        // Convert to WebP blob
+        // Convert to WebP blob with compression
         canvas.toBlob(
           (blob) => {
             if (blob) {
-              // Create a new File object with .webp extension
               const webpFile = new File(
                 [blob], 
                 file.name.replace(/\.[^/.]+$/, '.webp'),
@@ -76,7 +74,7 @@ export default function AddItem() {
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
-  // Get appropriate icon based on category
+  // Get icon for selected category
   const getCategoryIcon = (cat) => {
     switch (cat) {
       case 'top':
@@ -92,15 +90,14 @@ export default function AddItem() {
     }
   };
 
+  // Convert image to WebP and show preview
   const handleImageSelect = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
-        // Convert to WebP for better performance
         const webpFile = await convertToWebP(file);
         setImageFile(webpFile);
         
-        // Create preview
         const reader = new FileReader();
         reader.onloadend = () => {
           setImagePreview(reader.result);
@@ -120,6 +117,7 @@ export default function AddItem() {
     if (cameraInputRef.current) cameraInputRef.current.value = '';
   };
 
+  // Create new item in database with uploaded image
   async function handleSubmit(e) {
     e.preventDefault();
     setErrorMsg('');
@@ -142,7 +140,6 @@ export default function AddItem() {
 
     setLoading(true);
 
-    // Get current user
     const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
@@ -153,9 +150,8 @@ export default function AddItem() {
 
     let imageUrl = null;
 
-    // Upload image if provided
+    // Upload image to Supabase storage
     if (imageFile) {
-      // File is already WebP from handleImageSelect
       const fileName = `${user.id}/${Date.now()}.webp`;
       
       const { error: uploadError } = await supabase.storage
@@ -199,12 +195,10 @@ export default function AddItem() {
 
     setSuccessMsg('Item added to your wardrobe!');
     
-    // Refetch items to update the context
     await refetch();
     
     setLoading(false);
 
-    // small delay then go to wardrobe
     setTimeout(() => {
       navigate('/wardrobe');
     }, 500);

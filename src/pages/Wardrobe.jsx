@@ -25,7 +25,7 @@ export default function Wardrobe() {
     setSearchQuery(query);
   };
 
-  // Filter items by category and search query
+  // Filter items by both category and search query
   const visibleItems = items.filter((item) => {
     const matchesCategory = filteredCategory === 'all' || item.category === filteredCategory;
     const matchesSearch =
@@ -60,6 +60,7 @@ export default function Wardrobe() {
 
         <Filter onFilterChange={handleFilterChange} onSearchChange={handleSearchChange} />
 
+        {/* Display all wardrobe items in grid */}
         {loading ? (
           <p className="loading-text">Loading your wardrobe...</p>
         ) : visibleItems.length === 0 ? (
