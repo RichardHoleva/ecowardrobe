@@ -6,6 +6,7 @@ import { useUser } from '../context/UserContext';
 import ItemCard from '../components/ItemCard.jsx';
 import Navbar from '../components/Navbar';
 import Filter from '../components/Filter';
+import { COMMON_ICON, FAIcon } from '../icons/fa';
 
 const categories = ['all', 'top', 'bottom', 'shoes', 'outerwear'];
 
@@ -48,7 +49,7 @@ export default function Wardrobe() {
             {avatarUrl ? (
               <img src={avatarUrl} alt="Profile" className="profile-icon-img" />
             ) : (
-              <i className="fa-solid fa-user"></i>
+              <FAIcon icon={COMMON_ICON.user} />
             )}
           </button>
         </div>
@@ -71,8 +72,8 @@ export default function Wardrobe() {
           </p>
         ) : (
           <div className="wardrobe-grid">
-              {visibleItems.map((item, index) => (
-                <ItemCard key={item.id} item={item} compact priority={index < 4} />
+              {visibleItems.map((item, idx) => (
+                <ItemCard key={item.id} item={item} compact priority={idx < 2} />
               ))}
           </div>
         )}

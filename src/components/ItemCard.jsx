@@ -3,13 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useItems } from '../context/ItemsContext';
 import { getSupabaseSrcSet, toSupabaseRenderUrl } from '../lib/supabaseImages';
-
-const CATEGORY_ICON = {
-  top: 'fa-shirt',
-  bottom: 'fa-socks',
-  shoes: 'fa-shoe-prints',
-  outerwear: 'fa-mitten',
-};
+import { CATEGORY_ICON, FAIcon } from '../icons/fa';
 
 function ItemCard({ item, compact, priority = false }) {
   const navigate = useNavigate();
@@ -18,38 +12,51 @@ function ItemCard({ item, compact, priority = false }) {
   const updatingRef = useRef(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  const categoryIcon = CATEGORY_ICON[item.category] || 'fa-shirt';
+  const icon = CATEGORY_ICON[item.category] ?? CATEGORY_ICON.top;
 
   const imgSrc = useMemo(() => {
     if (item.image_thumb_url) return item.image_thumb_url;
     if (!item.image_url) return null;
-    return toSupabaseRenderUrl(item.image_url, { width: 360, height: 360, quality: 75, resize: 'cover' });
+    return toSupabaseRenderUrl(item.image_url, {
+      width: 360,
+      height: 360,
+      quality: 75,
+      resize: 'cover',
+    });
   }, [item.image_thumb_url, item.image_url]);
 
   const imgSrcSet = useMemo(() => {
     if (!item.image_url) return undefined;
-    return getSupabaseSrcSet(item.image_url, { width: 360, height: 360, quality: 75, resize: 'cover' });
+    return getSupabaseSrcSet(item.image_url, {
+      width: 360,
+      height: 360,
+      quality: 75,
+      resize: 'cover',
+    });
   }, [item.image_url]);
 
-  const handleWearChange = useCallback(async (e, increment) => {
-    e.stopPropagation();
-    if (updatingRef.current) return;
+  const handleWearChange = useCallback(
+    async (e, increment) => {
+      e.stopPropagation();
+      if (updatingRef.current) return;
 
-    updatingRef.current = true;
-    setUpdating(true);
+      updatingRef.current = true;
+      setUpdating(true);
 
-    const newCount = Math.max(0, (item.wear_count || 0) + increment);
+      const newCount = Math.max(0, (item.wear_count || 0) + increment);
 
-    const { error } = await supabase
-      .from('items')
-      .update({ wear_count: newCount })
-      .eq('id', item.id);
+      const { error } = await supabase
+        .from('items')
+        .update({ wear_count: newCount })
+        .eq('id', item.id);
 
-    if (!error) updateItem(item.id, { wear_count: newCount });
+      if (!error) updateItem(item.id, { wear_count: newCount });
 
-    updatingRef.current = false;
-    setUpdating(false);
-  }, [item.id, item.wear_count, updateItem]);
+      updatingRef.current = false;
+      setUpdating(false);
+    },
+    [item.id, item.wear_count, updateItem]
+  );
 
   const handleCardClick = useCallback(() => {
     navigate(`/item/${item.id}`);
@@ -73,8 +80,8 @@ function ItemCard({ item, compact, priority = false }) {
             style={{ opacity: imageLoaded ? 1 : 0 }}
           />
         ) : (
-          <div className="item-no-image">
-            <i className={`fas ${categoryIcon}`}></i>
+          <div className="item-no-image" aria-label={item.category || 'item'}>
+            <FAIcon icon={icon} />
           </div>
         )}
       </div>

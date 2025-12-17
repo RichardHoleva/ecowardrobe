@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { COMMON_ICON, FAIcon } from '../icons/fa';
 import "../styles/global.css";
 
 export default function Filter({ onFilterChange, onSearchChange }) {
@@ -21,7 +22,7 @@ export default function Filter({ onFilterChange, onSearchChange }) {
     return (
         <div className="filter-wrapper">
             <div className="search-bar-container">
-                <i className="fa-solid fa-magnifying-glass search-icon"></i>
+                <FAIcon icon={COMMON_ICON.search} className="search-icon" />
                 <input
                     type="text"
                     placeholder="Search items..."
@@ -40,7 +41,7 @@ export default function Filter({ onFilterChange, onSearchChange }) {
                         className="search-clear-btn"
                         aria-label="Clear search"
                     >
-                        <i className="fa-solid fa-xmark"></i>
+                        <FAIcon icon={COMMON_ICON.close} />
                     </button>
                 )}
             </div>

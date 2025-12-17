@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useUser } from '../context/UserContext';
+import { COMMON_ICON, FAIcon } from '../icons/fa';
 
 export default function EditProfile({ onClose }) {
   const { user, profile, updateProfile } = useUser();
@@ -91,7 +92,7 @@ export default function EditProfile({ onClose }) {
         <div className="edit-profile-header">
           <h2>Edit Profile</h2>
           <button onClick={onClose} className="close-btn">
-            <i className="fas fa-times"></i>
+            <FAIcon icon={COMMON_ICON.close} />
           </button>
         </div>
 
@@ -116,12 +117,12 @@ export default function EditProfile({ onClose }) {
                     onClick={handleRemoveImage}
                     className="remove-image-btn"
                   >
-                    <i className="fas fa-times"></i>
+                    <FAIcon icon={COMMON_ICON.close} />
                   </button>
                 </div>
               ) : (
                 <label htmlFor="avatar-input" className="upload-btn">
-                  <i className="fas fa-camera"></i> Upload Photo
+                  <FAIcon icon={COMMON_ICON.camera} /> Upload Photo
                   <input
                     id="avatar-input"
                     type="file"

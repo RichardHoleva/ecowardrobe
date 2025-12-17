@@ -5,6 +5,7 @@ import { useUser } from '../context/UserContext';
 import { useItems } from '../context/ItemsContext';
 import Navbar from '../components/Navbar';
 import EditProfile from '../components/EditProfile';
+import { COMMON_ICON, FAIcon } from '../icons/fa';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function Profile() {
             className="back-btn"
             aria-label="Go back"
           >
-            <i className="fas fa-arrow-left"></i>
+            <FAIcon icon={COMMON_ICON.back} />
           </button>
           <h1 className="profile-title">Profile</h1>
           <button
@@ -45,7 +46,7 @@ export default function Profile() {
             className="edit-btn"
             aria-label="Edit profile"
           >
-            <i className="fas fa-pen"></i>
+            <FAIcon icon={COMMON_ICON.edit} />
           </button>
         </div>
 
@@ -54,7 +55,7 @@ export default function Profile() {
             {avatarUrl ? (
               <img src={avatarUrl} alt={fullName} />
             ) : (
-              <i className="fas fa-user"></i>
+              <FAIcon icon={COMMON_ICON.user} />
             )}
           </div>
           <h2 className="profile-name">{fullName}</h2>
@@ -63,7 +64,7 @@ export default function Profile() {
 
         <div className="profile-stats">
           <div className="stat-card">
-            <i className="fas fa-fire stat-icon"></i>
+            <FAIcon icon={COMMON_ICON.fire} className="stat-icon" />
             <div className="stat-info">
               <span className="stat-value">{currentStreak}</span>
               <span className="stat-label">Day Streak</span>
@@ -71,7 +72,7 @@ export default function Profile() {
           </div>
 
           <div className="stat-card">
-            <i className="fas fa-tshirt stat-icon"></i>
+            <FAIcon icon={COMMON_ICON.shirt} className="stat-icon" />
             <div className="stat-info">
               <span className="stat-value">{totalItems}</span>
               <span className="stat-label">Items</span>
@@ -79,7 +80,7 @@ export default function Profile() {
           </div>
 
           <div className="stat-card">
-            <i className="fas fa-check stat-icon"></i>
+            <FAIcon icon={COMMON_ICON.check} className="stat-icon" />
             <div className="stat-info">
               <span className="stat-value">{totalWears}</span>
               <span className="stat-label">Total Wears</span>
@@ -89,7 +90,7 @@ export default function Profile() {
 
         <div className="profile-actions">
           <button onClick={handleLogout} className="logout-btn">
-            <i className="fas fa-arrow-right-from-bracket"></i>
+            <FAIcon icon={COMMON_ICON.logout} />
             Log Out
           </button>
         </div>

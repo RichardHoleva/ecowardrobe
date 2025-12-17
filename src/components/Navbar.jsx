@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import { NAV_ICON, FAIcon } from '../icons/fa';
 
 export default function Navbar() {
   return (
@@ -6,17 +7,17 @@ export default function Navbar() {
       <nav>
         <NavLink to="/home" end>
           <div className="nav-icon-container">
-            <i class="fa-solid fa-house" ></i>
+            <FAIcon icon={NAV_ICON.home} />
           </div>
         </NavLink>
         <NavLink to="/add">
           <div className="nav-icon-container">
-            <i class="fa-solid fa-plus"></i>
+            <FAIcon icon={NAV_ICON.add} />
           </div>
         </NavLink>
         <NavLink to="/wardrobe">
           <div className="nav-icon-container">
-            <i class="fa-solid fa-shirt"></i>
+            <FAIcon icon={NAV_ICON.wardrobe} />
           </div>
         </NavLink>
       </nav>

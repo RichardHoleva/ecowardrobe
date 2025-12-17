@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useUser } from './UserContext';
 import { toSupabaseRenderUrl } from '../lib/supabaseImages';
@@ -12,19 +19,32 @@ export function ItemsProvider({ children }) {
 
   const cacheKey = user?.id ? `ecowardrobe.items.v1.${user.id}` : null;
 
+  // ✅ 3A: Read localStorage cache in idle time to reduce TBT / main-thread blocking
   useEffect(() => {
     if (!cacheKey) return;
-    try {
-      const raw = localStorage.getItem(cacheKey);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        setItems(parsed);
-        setLoading(false);
+
+    const readCache = () => {
+      try {
+        const raw = localStorage.getItem(cacheKey);
+        if (!raw) return;
+
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setItems(parsed);
+          setLoading(false);
+        }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
+    };
+
+    if ('requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(readCache, { timeout: 1500 });
+      return () => window.cancelIdleCallback(id);
     }
+
+    const t = setTimeout(readCache, 0);
+    return () => clearTimeout(t);
   }, [cacheKey]);
 
   const fetchItems = useCallback(async () => {
@@ -34,8 +54,10 @@ export function ItemsProvider({ children }) {
 
     const { data, error } = await supabase
       .from('items')
-      .select('id,name,category,brand_type,image_url,wear_count,last_worn,created_at,user_id')
-      .eq('user_id', user.id) // ✅ CRITICAL: only your items
+      .select(
+        'id,name,category,brand_type,image_url,wear_count,last_worn,created_at,user_id'
+      )
+      .eq('user_id', user.id) // ✅ critical: only fetch this user's items
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -48,7 +70,12 @@ export function ItemsProvider({ children }) {
     const itemsWithThumbs = (data || []).map((item) => ({
       ...item,
       image_thumb_url: item.image_url
-        ? toSupabaseRenderUrl(item.image_url, { width: 360, height: 360, quality: 75, resize: 'cover' })
+        ? toSupabaseRenderUrl(item.image_url, {
+            width: 360,
+            height: 360,
+            quality: 75,
+            resize: 'cover',
+          })
         : null,
     }));
 
@@ -58,7 +85,7 @@ export function ItemsProvider({ children }) {
       try {
         localStorage.setItem(cacheKey, JSON.stringify(itemsWithThumbs));
       } catch {
-        // ignore quota
+        // ignore quota errors
       }
     }
 
@@ -66,8 +93,9 @@ export function ItemsProvider({ children }) {
   }, [user?.id, cacheKey]);
 
   useEffect(() => {
-    if (user) fetchItems();
-    else {
+    if (user) {
+      fetchItems();
+    } else {
       setItems([]);
       setLoading(false);
     }
@@ -77,9 +105,15 @@ export function ItemsProvider({ children }) {
     const normalized = {
       ...newItem,
       image_thumb_url: newItem?.image_url
-        ? toSupabaseRenderUrl(newItem.image_url, { width: 360, height: 360, quality: 75, resize: 'cover' })
+        ? toSupabaseRenderUrl(newItem.image_url, {
+            width: 360,
+            height: 360,
+            quality: 75,
+            resize: 'cover',
+          })
         : null,
     };
+
     setItems((prev) => [normalized, ...prev]);
   }, []);
 
@@ -87,10 +121,18 @@ export function ItemsProvider({ children }) {
     setItems((prev) =>
       prev.map((item) => {
         if (item.id !== id) return item;
+
         const next = { ...item, ...updates };
+
         if (updates?.image_url) {
-          next.image_thumb_url = toSupabaseRenderUrl(updates.image_url, { width: 360, height: 360, quality: 75, resize: 'cover' });
+          next.image_thumb_url = toSupabaseRenderUrl(updates.image_url, {
+            width: 360,
+            height: 360,
+            quality: 75,
+            resize: 'cover',
+          });
         }
+
         return next;
       })
     );
@@ -100,15 +142,13 @@ export function ItemsProvider({ children }) {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  const totalWears = useMemo(
-    () => items.reduce((sum, item) => sum + (item.wear_count || 0), 0),
-    [items]
-  );
+  const totalWears = useMemo(() => {
+    return items.reduce((sum, item) => sum + (item.wear_count || 0), 0);
+  }, [items]);
 
-  const co2Saved = useMemo(
-    () => Math.floor(totalWears / 10) * 5,
-    [totalWears]
-  );
+  const co2Saved = useMemo(() => {
+    return Math.floor(totalWears / 10) * 5;
+  }, [totalWears]);
 
   const value = useMemo(
     () => ({
@@ -119,9 +159,18 @@ export function ItemsProvider({ children }) {
       deleteItem,
       refetch: fetchItems,
       totalWears,
-      co2Saved
+      co2Saved,
     }),
-    [items, loading, addItem, updateItem, deleteItem, fetchItems, totalWears, co2Saved]
+    [
+      items,
+      loading,
+      addItem,
+      updateItem,
+      deleteItem,
+      fetchItems,
+      totalWears,
+      co2Saved,
+    ]
   );
 
   return <ItemsContext.Provider value={value}>{children}</ItemsContext.Provider>;
@@ -129,6 +178,8 @@ export function ItemsProvider({ children }) {
 
 export function useItems() {
   const context = useContext(ItemsContext);
-  if (context === undefined) throw new Error('useItems must be used within an ItemsProvider');
+  if (context === undefined) {
+    throw new Error('useItems must be used within an ItemsProvider');
+  }
   return context;
 }
