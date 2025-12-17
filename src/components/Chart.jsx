@@ -1,6 +1,8 @@
 // src/components/Chart.jsx
 import { memo } from 'react';
 import { useItems } from '../context/ItemsContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCar } from '@fortawesome/free-solid-svg-icons';
 
 const GOAL_CO2 = 150; // kg
 
@@ -19,8 +21,8 @@ function Chart() {
 
   // Calculate progress percentage toward goal
   const percentage = Math.min((co2Saved / GOAL_CO2) * 100, 100);
-  // Convert CO2 to km equivalent (1 km ≈ 0.068 kg CO2)
-  const kmEquivalent = Math.round(co2Saved / 0.068);
+  // Convert CO2 to km equivalent (1 km ≈ 0.12 kg CO2 for average car)
+  const kmEquivalent = Math.round(co2Saved / 0.12);
 
   return (
     <div className="progress-chart-container">
@@ -42,7 +44,7 @@ function Chart() {
       </div>
 
       <p className="progress-chart-equivalent">
-        = {kmEquivalent} km of driving avoided <i className="fa-solid fa-car-side"></i>
+        = {kmEquivalent} km of driving avoided <FontAwesomeIcon icon={faCar} />
       </p>
 
       <p className="progress-chart-footnote">

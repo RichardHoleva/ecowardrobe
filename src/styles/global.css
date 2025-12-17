@@ -1,4 +1,3 @@
-
 .app {
   min-height: 100vh;
   display: flex;
@@ -510,6 +509,10 @@ label {
   border-radius: 0.5rem;
   font-size: 0.95rem;
   font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .image-preview-box {
@@ -1382,24 +1385,38 @@ label {
   align-items: center;
 }
 
+.edit-profile-form .form-field {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.edit-profile-form .form-field label {
+  margin-bottom: 0.5rem;
+}
+
+.edit-profile-form .form-field input {
+  width: 100%;
+}
+
 .edit-profile-form .image-upload {
   min-height: 180px;
   width: 100%;
   max-width: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .edit-profile-form .image-preview-box {
   max-width: 180px;
-}
-
-.edit-profile-form .image-preview-box img {
-  max-height: 180px;
-  border-radius: 50%;
-}
-
-.edit-profile-form .form-field {
-  width: 100%;
-  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .edit-profile-form .submit-btn {

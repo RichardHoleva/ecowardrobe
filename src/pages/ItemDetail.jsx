@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useItems } from '../context/ItemsContext';
 import Navbar from '../components/Navbar';
+import { FAIcon, COMMON_ICON, CATEGORY_ICON } from '../icons/fa';
 
 export default function ItemDetail() {
   const { id } = useParams();
@@ -217,7 +218,7 @@ export default function ItemDetail() {
       <Navbar />
       <div className="detail-page">
         <button className="back-btn" onClick={() => navigate(-1)}>
-          <i className="fas fa-arrow-left"></i>
+          <FAIcon icon={COMMON_ICON.back} />
         </button>
 
         <div className="detail-image">
@@ -231,7 +232,7 @@ export default function ItemDetail() {
             />
           ) : (
             <div className="detail-no-image">
-              <i className="fas fa-tshirt"></i>
+              <FAIcon icon={COMMON_ICON.shirt} />
             </div>
           )}
           <button 
@@ -240,7 +241,7 @@ export default function ItemDetail() {
             disabled={uploading}
             title="Change photo"
           >
-            <i className="fas fa-camera"></i>
+            <FAIcon icon={COMMON_ICON.camera} />
           </button>
           <input
             ref={fileInputRef}
